@@ -1,2 +1,3 @@
 # pixijs-grid
-A "good enough" grid sprite for PixiJS
+
+A "good enough" grid sprite for PixiJS.
