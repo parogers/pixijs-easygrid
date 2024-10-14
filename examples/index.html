@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script type="text/javascript">
+            /* See https://github.com/evanw/esbuild/issues/3509 */
+            window.require = function(name) {
+                if (name === 'pixi.js') {
+                    return window.PIXI;
+                }
+                throw Error("Don't know how to require " + name);
+            }
+        </script>
+        <script src="pixijs-grid.js"></script>
+    </head>
+    <body>
+        <h1>Example</h1>
+
+        <script type="module">
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            document.body.appendChild(app.canvas);
+
+            const grid = new easygrid.Grid();
+            grid.x = 50;
+            grid.y = 50;
+            app.stage.addChild(grid);
+        </script>
+    </body>
+</html>
