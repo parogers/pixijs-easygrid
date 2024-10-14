@@ -25,7 +25,6 @@
             document.body.appendChild(app.canvas);
 
             const spritesheet = await PIXI.Assets.load('tiles.json');
-            console.log(spritesheet.textures['grass-nw']);
             const tiles = [
                 ['dirt-full', 'grass-nw', 'grass-n', 'grass-n', 'grass-n', 'grass-ne'],
                 ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
@@ -35,7 +34,9 @@
                 ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
                 ['grass-sw', 'grass-s', 'grass-s', 'grass-s', 'grass-s', 'grass-se'],
             ];
-            const grid = new easygrid.Grid(spritesheet);
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+            });
             grid.setTiles(tiles);
             grid.x = 50;
             grid.y = 50;
