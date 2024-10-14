@@ -43,9 +43,47 @@ var easygrid = (() => {
   // src/grid.ts
   var PIXI = __toESM(__require("pixi.js"));
   var Grid = class extends PIXI.Container {
-    constructor() {
+    constructor(spritesheet) {
       super();
+      this.spritesheet = spritesheet;
+      this.graphics = new PIXI.Graphics();
+      this.addChild(this.graphics);
+    }
+    setTiles(tiles) {
+      this.tiles = tiles;
+      this.update();
+    }
+    setTile(row, col, textureName) {
+      this.tiles[row][col] = textureName;
+      this.update();
+    }
+    renderContext() {
+      const tileSize = 16;
+      const context = new PIXI.GraphicsContext();
+      for (let row = 0; row < this.tiles.length; row++) {
+        if (!this.tiles[row]) {
+          console.log("invalid row:", row);
+          continue;
+        }
+        for (let col = 0; col < this.tiles[0].length; col++) {
+          const name = this.tiles[row][col];
+          if (name) {
+            const tex = this.spritesheet.textures[name];
+            context.texture(tex).translate(tileSize, 0);
+          }
+        }
+        context.translate(
+          -tileSize * this.tiles[row].length,
+          tileSize
+        );
+      }
+      return context;
+    }
+    update() {
+      const context = this.renderContext();
+      this.graphics.context = context;
     }
   };
   return __toCommonJS(src_exports);
 })();
+//# sourceMappingURL=pixijs-grid.js.map

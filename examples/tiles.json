@@ -1,0 +1,410 @@
+{"frames": { 
+"grass-ne":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-w":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-ne-i":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-n":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-nw-se":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-nw-i":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-full":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-se-i":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-sw":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-s":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-sw-i":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-e":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"dirt-full":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-nw":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-ne-sw":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"grass-se":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "tiles.png",
+  "size": { "w": 85, "h": 85 },
+  "scale": 1.0
+}
+}
