@@ -4,10 +4,30 @@ import * as PIXI from 'pixi.js';
 type GridParams = {
     spritesheet: PIXI.Spritesheet;
     autoUpdate?: boolean;
+    tileSize?: Size;
+}
+
+type Size = {
+    width: number;
+    height: number;
+}
+
+function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
+    for (let textureName in spritesheet.textures) {
+        const texture = spritesheet.textures[textureName];
+        if (texture.width && texture.height) {
+            return {
+                width: texture.width,
+                height: texture.height,
+            };
+        }
+    }
+    throw Error('cannot guess tile size from spritesheet');
 }
 
 export class Grid extends PIXI.Container {
     tiles: number[][];
+    tileSize: Size;
     _autoUpdate: boolean = false;
 
     constructor(params: GridParams) {
@@ -17,6 +37,7 @@ export class Grid extends PIXI.Container {
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
         this.autoUpdate = params.autoUpdate ?? true;
+        this.tileSize = params.tileSize ?? guessTileSize(this.spritesheet);
     }
 
     /*
@@ -52,7 +73,6 @@ export class Grid extends PIXI.Container {
     }
 
     renderContext(): PIXI.GraphicsContext {
-        const tileSize = 16;
         const context = new PIXI.GraphicsContext();
         for (let row = 0; row < this.tiles.length; row++) {
             for (let col = 0; col < this.tiles[0].length; col++) {
@@ -61,11 +81,11 @@ export class Grid extends PIXI.Container {
                     const tex = this.spritesheet.textures[name];
                     context.texture(tex);
                 }
-                context.translate(tileSize, 0);
+                context.translate(this.tileSize.width, 0);
             }
             context.translate(
-                -tileSize*this.tiles[row].length,
-                tileSize
+                -this.tileSize.width*this.tiles[row].length,
+                this.tileSize.height
             );
         }
         return context;
