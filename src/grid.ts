@@ -3,13 +3,29 @@ import * as PIXI from 'pixi.js';
 
 type GridParams = {
     spritesheet: PIXI.Spritesheet;
+    /* Whether to automatically update the state of the grid based on the shared
+     * ticker. If false, you must call 'update' every frame to make sure the
+     * grid is visually up to date. */
     autoUpdate?: boolean;
+    /* The pixel dimensions of each tile */
     tileSize?: Size;
+    /* Whether to apply a mask over the grid based on the viewport. There is a
+     * slight performance gain by not masking. Useful when the grid is rendered
+     * from border to border, meaning the canvas element is already acting as
+     * a clipping mask. */
+    viewportMask?: boolean;
 }
 
 type Size = {
     width: number;
     height: number;
+}
+
+type GridRange = {
+    rowStart: number;
+    rowEnd: number;
+    colStart: number;
+    colEnd: number;
 }
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
@@ -31,6 +47,8 @@ export class Grid extends PIXI.Container {
     viewport: PIXI.Rectangle;
     _autoUpdate: boolean = false;
     _viewport: PIXI.Rectangle;
+    visibleGrid: GridRange;
+    viewportMask: boolean;
 
     constructor(params: GridParams) {
         super();
@@ -41,6 +59,7 @@ export class Grid extends PIXI.Container {
         this.addChild(this.graphics);
         this.addChild(this.maskGraphics);
         this.autoUpdate = params.autoUpdate ?? true;
+        this.viewportMask = params.viewportMask ?? true;
         this.tileSize = params.tileSize ?? guessTileSize(this.spritesheet);
     }
 
@@ -55,7 +74,11 @@ export class Grid extends PIXI.Container {
         }
         this._autoUpdate = value;
         if (this._autoUpdate) {
-            PIXI.Ticker.shared.add(this.update, this);
+            // Low priority means the grid update will happen after most other
+            // things get updated. So if there's an "update game" ticker that
+            // pans and moves the grid around, that will be done before the
+            // grid updates it's visual state to match what's expected.
+            PIXI.Ticker.shared.add(this.update, this, PIXI.UPDATE_PRIORITY.LOW);
         } else {
             PIXI.Ticker.shared.remove(this.update, this);
         }
@@ -84,7 +107,7 @@ export class Grid extends PIXI.Container {
         this.tilesDirty = true;
     }
 
-    getTileBounds(viewport: PIXI.Rectangle) {
+    getTileBounds(viewport: PIXI.Rectangle): GridRange {
         if (!viewport) {
             return {
                 rowStart: 0,
@@ -106,7 +129,7 @@ export class Grid extends PIXI.Container {
     }
 
     renderContext(): PIXI.GraphicsContext {
-        const { rowStart, rowEnd, colStart, colEnd } = this.getTileBounds(this.viewport);
+        const { rowStart, rowEnd, colStart, colEnd } = this.visibleGrid;
         const context = new PIXI.GraphicsContext();
         context.translate(
             this.tileSize.width*colStart,
@@ -129,6 +152,24 @@ export class Grid extends PIXI.Container {
         return context;
     }
 
+    private updateMask(viewport: PIXI.Rectangle) {
+        if (this.graphics.mask) {
+            this.maskGraphics.context.destroy();
+            this.graphics.mask = null;
+        }
+        if (this.viewportMask) {
+            const context = new PIXI.GraphicsContext()
+                .rect(
+                    viewport.x,
+                    viewport.y,
+                    viewport.width,
+                    viewport.height
+                ).fill()
+            this.maskGraphics.context = context;
+            this.graphics.mask = this.maskGraphics;
+        }
+    }
+
     /*
      * Updates the visible state of this grid by rendering the underlying
      * tiles and textures. Note it's safe to call this function repeatedly.
@@ -146,15 +187,15 @@ export class Grid extends PIXI.Container {
             this.tilesDirty = true;
         }
         const updateViewport = (
-            this.viewport && this._viewport && (
-            this.viewport.x !== this._viewport.x ||
-            this.viewport.y !== this._viewport.y ||
-            this.viewport.width !== this._viewport.width ||
-            this.viewport.height !== this._viewport.height
+            this.viewport && (
+            this.viewport.x - this._viewport.x ||
+            this.viewport.y - this._viewport.y ||
+            this.viewport.width - this._viewport.width ||
+            this.viewport.height - this._viewport.height
         ));
         if (updateViewport) {
             const bounds1 = this.getTileBounds(this.viewport);
-            const bounds2 = this.getTileBounds(this._viewport);
+            const bounds2 = this.visibleGrid || this.getTileBounds(this._viewport);
             if (
                 bounds1.colStart !== bounds2.colStart ||
                 bounds1.rowStart !== bounds2.rowStart ||
@@ -162,27 +203,16 @@ export class Grid extends PIXI.Container {
                 bounds1.rowEnd !== bounds2.rowEnd
             ) {
                 this.tilesDirty = true;
+                this.visibleGrid = bounds1;
             }
 
-            // this.graphics.x = -this.viewport.x*this.scale.x;
-            // this.graphics.y = -this.viewport.y*this.scale.y;
             this._viewport.x = this.viewport.x;
             this._viewport.y = this.viewport.y;
             this._viewport.width = this.viewport.width;
             this._viewport.height = this.viewport.height;
-
-            const context = new PIXI.GraphicsContext()
-                .rect(
-                    this.viewport.x,
-                    this.viewport.y,
-                    this.viewport.width,
-                    this.viewport.height
-                ).fill()
-            if (this.maskGraphics.context) {
-                this.maskGraphics.context.destroy();
+            if (this.viewportMask) {
+                this.updateMask(this.viewport);
             }
-            this.maskGraphics.context = context;
-            this.graphics.mask = this.maskGraphics;
         }
 
         if (this.tilesDirty) {

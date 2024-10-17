@@ -1,0 +1,108 @@
+<html>
+    <head>
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="pixijs-grid.js"></script>
+        <script type="module">
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            app.stage.scale = 0.1;
+            app.renderer.background.color = 0xa0a0a0;
+            document.body.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('tiles.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            function getTiles() {
+                const rows = 2000;
+                const cols = 2000;
+                const tiles = [];
+                for (let row = 0; row < rows; row++) {
+                    tiles.push([]);
+                    for (let col = 0; col < cols; col++) {
+                        const textureName = Math.random() < 0.25 ? 'dirt-full' : 'grass-full';
+                        tiles[row].push(textureName);
+                    }
+                }
+                return tiles;
+            }
+
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+            });
+            grid.viewport = new PIXI.Rectangle(
+                0,
+                0,
+                app.renderer.width/app.stage.scale.x,
+                app.renderer.height/app.stage.scale.y
+            );
+            grid.setTiles(getTiles());
+            grid.x = 0;
+            grid.y = 0;
+            app.stage.addChild(grid);
+
+            document.getElementById('size').innerText = `${grid.rows}x${grid.cols}`;
+            const fpsEl = document.getElementById('fps');
+
+            const zoomEl = document.getElementById('zoom');
+            zoomEl.value = '0.1';
+            zoomEl.addEventListener('change', (event) => {
+                console.log(event.target.value);
+                app.stage.scale = +event.target.value;
+                grid.viewport.width = app.renderer.width / app.stage.scale.x;
+                grid.viewport.height = app.renderer.height / app.stage.scale.y;
+            });
+
+            let samples = 0;
+            let seconds = 0;
+            let total = 0;
+            PIXI.Ticker.shared.add((tm) => {
+                grid.viewport.x = 350 + Math.cos(tm.lastTime/800) * 300;
+                grid.viewport.y = 350 + Math.cos(tm.lastTime/600) * 300;
+                // Make the grid stay in place as we pan around the map. This
+                // is probably what you want when you have a little person
+                // walking around the map etc.
+                grid.x = -grid.viewport.x*grid.scale.x;
+                grid.y = -grid.viewport.y*grid.scale.y;
+
+                const second = Math.round(tm.lastTime/1000);
+                seconds += tm.elapsedMS/1000;
+                total += tm.FPS;
+                samples++;
+                if (seconds > 1) {
+                    const average = total / samples;
+                    fpsEl.innerText = '' + average;
+                    total = 0;
+                    samples = 0;
+                    seconds = 0;
+
+                    const visibleEl = document.getElementById('visible');
+                    if (grid.visibleGrid) {
+                        const rows = grid.visibleGrid.rowEnd - grid.visibleGrid.rowStart + 1;
+                        const cols = grid.visibleGrid.colEnd - grid.visibleGrid.colStart + 1;
+                        visibleEl.innerText = `${rows}x${cols}`;
+                    }
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Example: huge map</h1>
+        <div>
+            <label>
+                Zoom factor:
+                <select id="zoom">
+                    <option value="0.1">0.1</option>
+                    <option value="0.5">0.5</option>
+                    <option value="1">1</option>
+                </select>
+            </label>
+        </div>
+        <p>Average FPS: <span id="fps"></span></p>
+        <p>Map size: <span id="size"></span></p>
+        <p>Visible size: <span id="visible"></span></p>
+    </body>
+</html>
