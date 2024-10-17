@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="pixijs-grid.js"></script>
+        <script type="module">
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            app.stage.scale = 2;
+            app.renderer.background.color = 0xa0a0a0;
+            document.body.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('tiles.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            function getTiles() {
+                /* The grid was exported and copy+pasted using tiled map editor,
+                 * then hacked here to make it work with my spritesheet. */
+                const textureNames = [
+                    "grass-ne",
+                    "grass-w",
+                    "grass-ne-i",
+                    "grass-n",
+                    "grass-nw-se",
+                    "grass-nw-i",
+                    "grass-full",
+                    "grass-se-i",
+                    "grass-sw",
+                    "grass-s",
+                    "grass-sw-i",
+                    "grass-e",
+                    "dirt-full",
+                    "grass-nw",
+                    "grass-ne-sw",
+                    "grass-se",
+                ];
+                const rows = 20;
+                const cols = 20;
+                const tileIndices = [
+                    13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
+                    13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
+                    13,13,13,13,13,13,13,14,4,4,4,4,1,13,13,13,13,13,13,13,
+                    13,13,13,13,13,14,4,6,7,7,7,7,3,4,4,4,4,4,1,13,
+                    13,13,13,13,13,2,7,7,7,7,7,7,7,8,10,10,11,7,12,13,
+                    13,13,13,13,13,2,7,7,7,7,7,7,8,16,13,13,2,7,12,13,
+                    13,13,13,13,13,2,7,7,7,7,7,8,16,13,13,13,9,10,16,13,
+                    13,13,14,4,4,6,7,7,7,7,7,12,13,14,4,4,4,1,13,13,
+                    13,13,2,7,7,7,8,10,10,10,11,12,13,2,7,7,7,12,13,13,
+                    13,13,2,7,7,8,16,14,1,13,2,12,13,2,7,7,7,12,13,13,
+                    13,13,2,7,7,12,14,6,12,13,2,12,13,9,10,10,10,16,13,13,
+                    13,13,2,7,7,12,9,10,16,13,2,3,4,4,4,1,13,13,13,13,
+                    13,13,2,7,7,12,13,13,13,13,2,7,7,7,7,12,13,13,13,13,
+                    13,13,2,7,7,3,4,4,4,4,6,7,7,7,7,12,13,13,13,13,
+                    13,13,2,7,7,7,7,7,7,7,7,7,7,7,7,3,1,13,13,13,
+                    13,13,2,7,7,7,7,7,7,8,10,10,10,10,11,7,3,4,1,13,
+                    13,13,2,7,7,7,7,7,7,12,13,13,14,4,15,11,8,10,5,1,
+                    13,13,2,7,7,7,7,7,7,12,13,13,2,7,12,9,16,13,2,12,
+                    13,13,9,10,10,10,10,10,10,16,13,13,9,10,16,13,13,13,2,12,
+                    13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,9,16
+                ];
+                const tiles = [];
+                for (let row = 0; row < rows; row++) {
+                    tiles.push([]);
+                    for (let col = 0; col < cols; col++) {
+                        const index = tileIndices[row*cols+col];
+                        tiles[row].push(textureNames[index-1]);
+                    }
+                }
+                return tiles;
+            }
+
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+            });
+            // Note: app.stage is scaled up so the viewport is undersized here
+            grid.viewport = new PIXI.Rectangle(0, 0, 300, 200);
+            grid.setTiles(getTiles());
+            grid.x = 0;
+            grid.y = 0;
+            app.stage.addChild(grid);
+
+            const fpsEl = document.getElementById('fps');
+
+            let seconds = 0;
+            PIXI.Ticker.shared.add((tm) => {
+                grid.viewport.x = 25 + Math.cos(tm.lastTime/1200) * 50;
+                grid.viewport.y = 100 + Math.cos(tm.lastTime/1000) * 50;
+                // Make the grid stay in place as we pan around the map. This
+                // is probably what you want when you have a little person
+                // walking around the map etc.
+                grid.x = -grid.viewport.x*grid.scale.x;
+                grid.y = -grid.viewport.y*grid.scale.y;
+
+                const second = Math.round(tm.lastTime/1000);
+                seconds += tm.elapsedMS/1000;
+                if (seconds > 1) {
+                    fpsEl.innerText = '' + tm.FPS;
+                    seconds = 0;
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Example: tiled map</h1>
+        <p>Frames/second: <span id="fps"></span></p>
+    </body>
+</html>

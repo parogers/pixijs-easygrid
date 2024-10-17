@@ -1,46 +1,15 @@
 <html>
     <head>
         <script src="https://pixijs.download/dev/pixi.js"></script>
-        <script type="text/javascript">
-            /* See https://github.com/evanw/esbuild/issues/3509 */
-            window.require = function(name) {
-                if (name === 'pixi.js') {
-                    return window.PIXI;
-                }
-                throw Error("Don't know how to require " + name);
-            }
-        </script>
+        <script src="require.js"></script>
         <script src="pixijs-grid.js"></script>
     </head>
     <body>
-        <h1>Example</h1>
+        <h1>Examples</h1>
 
-        <script type="module">
-            const app = new PIXI.Application();
-            await app.init({
-                width: 600,
-                height: 400,
-            });
-            app.stage.scale = 2;
-            document.body.appendChild(app.canvas);
-
-            const spritesheet = await PIXI.Assets.load('tiles.json');
-            const tiles = [
-                ['dirt-full', 'grass-nw', 'grass-n', 'grass-n', 'grass-n', 'grass-ne'],
-                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-nw', 'grass-nw-i', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-sw', 'grass-s', 'grass-s', 'grass-s', 'grass-s', 'grass-se'],
-            ];
-            const grid = new easygrid.Grid({
-                spritesheet: spritesheet,
-            });
-            grid.setTiles(tiles);
-            grid.x = 50;
-            grid.y = 50;
-            app.stage.addChild(grid);
-        </script>
+        <ul>
+            <li><a href="simple.html">Simple usage</a></li>
+            <li><a href="panning.html">Panning around</a></li>
+        </ul>
     </body>
 </html>
