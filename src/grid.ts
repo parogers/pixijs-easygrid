@@ -44,10 +44,10 @@ function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
 export class Grid extends PIXI.Container {
     tiles: number[][];
     tileSize: Size;
-    viewport: PIXI.Rectangle;
+    viewport: PIXI.Rectangle = new PIXI.Rectangle();
     _autoUpdate: boolean = false;
-    _viewport: PIXI.Rectangle;
-    visibleGrid: GridRange;
+    renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
+    renderedGridRange: GridRange;
     viewportMask: boolean;
 
     constructor(params: GridParams) {
@@ -107,8 +107,11 @@ export class Grid extends PIXI.Container {
         this.tilesDirty = true;
     }
 
-    getTileBounds(viewport: PIXI.Rectangle): GridRange {
-        if (!viewport) {
+    /*
+     * Returns the GridRange that is spanned by the current viewport
+     */
+    getTileBounds(): GridRange {
+        if (this.viewport.isEmpty()) {
             return {
                 rowStart: 0,
                 rowEnd: this.tiles.length-1,
@@ -116,10 +119,10 @@ export class Grid extends PIXI.Container {
                 colEnd: this.tiles[0].length-1,
             };
         }
-        const rowStart = Math.max(Math.floor(viewport.y / this.tileSize.height), 0);
-        const colStart = Math.max(Math.floor(viewport.x / this.tileSize.width), 0);
-        const rowEnd = Math.min(Math.ceil((viewport.y + viewport.height) / this.tileSize.height), this.rows - 1);
-        const colEnd = Math.min(Math.ceil((viewport.x + viewport.width) / this.tileSize.width), this.cols - 1);
+        const rowStart = Math.max(Math.floor(this.viewport.y / this.tileSize.height), 0);
+        const colStart = Math.max(Math.floor(this.viewport.x / this.tileSize.width), 0);
+        const rowEnd = Math.min(Math.ceil((this.viewport.y + this.viewport.height) / this.tileSize.height), this.rows - 1);
+        const colEnd = Math.min(Math.ceil((this.viewport.x + this.viewport.width) / this.tileSize.width), this.cols - 1);
         return {
             rowStart,
             rowEnd,
@@ -128,15 +131,17 @@ export class Grid extends PIXI.Container {
         };
     }
 
-    renderContext(): PIXI.GraphicsContext {
-        const { rowStart, rowEnd, colStart, colEnd } = this.visibleGrid;
+    renderContext(range: GridRange|null): PIXI.GraphicsContext {
+        if (!range) {
+            range = this.getTileBounds();
+        }
         const context = new PIXI.GraphicsContext();
         context.translate(
-            this.tileSize.width*colStart,
-            this.tileSize.height*rowStart
+            this.tileSize.width*range.colStart,
+            this.tileSize.height*range.rowStart
         );
-        for (let row = rowStart; row <= rowEnd; row++) {
-            for (let col = colStart; col <= colEnd; col++) {
+        for (let row = range.rowStart; row <= range.rowEnd; row++) {
+            for (let col = range.colStart; col <= range.colEnd; col++) {
                 const name = this.tiles[row][col]
                 if (name) {
                     const tex = this.spritesheet.textures[name];
@@ -145,10 +150,15 @@ export class Grid extends PIXI.Container {
                 context.translate(this.tileSize.width, 0);
             }
             context.translate(
-                -this.tileSize.width*(colEnd - colStart + 1),
+                -this.tileSize.width*(range.colEnd - range.colStart + 1),
                 this.tileSize.height
             );
         }
+        this.renderedViewport.x = this.viewport.x;
+        this.renderedViewport.y = this.viewport.y;
+        this.renderedViewport.width = this.viewport.width;
+        this.renderedViewport.height = this.viewport.height;
+        this.renderedGridRange = range;
         return context;
     }
 
@@ -179,44 +189,33 @@ export class Grid extends PIXI.Container {
      * object. (ie. autoUpdate is false)
      */
     update() {
-        if (this.viewport && !this._viewport) {
-            this._viewport = new PIXI.Rectangle();
-        }
-        if (!this.viewport && this._viewport) {
-            this._viewport = null;
-            this.tilesDirty = true;
-        }
         const updateViewport = (
             this.viewport && (
-            this.viewport.x - this._viewport.x ||
-            this.viewport.y - this._viewport.y ||
-            this.viewport.width - this._viewport.width ||
-            this.viewport.height - this._viewport.height
+            this.renderedViewport.isEmpty() ||
+            this.viewport.x !== this.renderedViewport.x ||
+            this.viewport.y !== this.renderedViewport.y ||
+            this.viewport.width !== this.renderedViewport.width ||
+            this.viewport.height !== this.renderedViewport.height
         ));
+        let newRange = this.renderedGridRange;
         if (updateViewport) {
-            const bounds1 = this.getTileBounds(this.viewport);
-            const bounds2 = this.visibleGrid || this.getTileBounds(this._viewport);
+            newRange = this.getTileBounds();
             if (
-                bounds1.colStart !== bounds2.colStart ||
-                bounds1.rowStart !== bounds2.rowStart ||
-                bounds1.colEnd !== bounds2.colEnd ||
-                bounds1.rowEnd !== bounds2.rowEnd
+                !this.renderedGridRange ||
+                newRange.colStart !== this.renderedGridRange.colStart ||
+                newRange.rowStart !== this.renderedGridRange.rowStart ||
+                newRange.colEnd !== this.renderedGridRange.colEnd ||
+                newRange.rowEnd !== this.renderedGridRange.rowEnd
             ) {
                 this.tilesDirty = true;
-                this.visibleGrid = bounds1;
             }
-
-            this._viewport.x = this.viewport.x;
-            this._viewport.y = this.viewport.y;
-            this._viewport.width = this.viewport.width;
-            this._viewport.height = this.viewport.height;
-            if (this.viewportMask) {
+            if (this.viewportMask && !this.viewport.isEmpty()) {
                 this.updateMask(this.viewport);
             }
         }
 
         if (this.tilesDirty) {
-            const context = this.renderContext();
+            const context = this.renderContext(newRange);
             if (this.graphics.context) {
                 this.graphics.context.destroy();
             }

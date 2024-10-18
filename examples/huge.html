@@ -9,7 +9,6 @@
                 width: 600,
                 height: 400,
             });
-            app.stage.scale = 0.1;
             app.renderer.background.color = 0xa0a0a0;
             document.body.appendChild(app.canvas);
 
@@ -33,12 +32,6 @@
             const grid = new easygrid.Grid({
                 spritesheet: spritesheet,
             });
-            grid.viewport = new PIXI.Rectangle(
-                0,
-                0,
-                app.renderer.width/app.stage.scale.x,
-                app.renderer.height/app.stage.scale.y
-            );
             grid.setTiles(getTiles());
             grid.x = 0;
             grid.y = 0;
@@ -48,13 +41,10 @@
             const fpsEl = document.getElementById('fps');
 
             const zoomEl = document.getElementById('zoom');
-            zoomEl.value = '0.1';
             zoomEl.addEventListener('change', (event) => {
-                console.log(event.target.value);
                 app.stage.scale = +event.target.value;
-                grid.viewport.width = app.renderer.width / app.stage.scale.x;
-                grid.viewport.height = app.renderer.height / app.stage.scale.y;
             });
+            zoomEl.value = '1';
 
             let samples = 0;
             let seconds = 0;
@@ -62,6 +52,9 @@
             PIXI.Ticker.shared.add((tm) => {
                 grid.viewport.x = 350 + Math.cos(tm.lastTime/800) * 300;
                 grid.viewport.y = 350 + Math.cos(tm.lastTime/600) * 300;
+                // Scale the viewport to always match the render area size
+                grid.viewport.width = app.renderer.width / app.stage.scale.x;
+                grid.viewport.height = app.renderer.height / app.stage.scale.y;
                 // Make the grid stay in place as we pan around the map. This
                 // is probably what you want when you have a little person
                 // walking around the map etc.
@@ -80,9 +73,10 @@
                     seconds = 0;
 
                     const visibleEl = document.getElementById('visible');
-                    if (grid.visibleGrid) {
-                        const rows = grid.visibleGrid.rowEnd - grid.visibleGrid.rowStart + 1;
-                        const cols = grid.visibleGrid.colEnd - grid.visibleGrid.colStart + 1;
+                    const range = grid.renderedGridRange;
+                    if (range) {
+                        const rows = range.rowEnd - range.rowStart + 1;
+                        const cols = range.colEnd - range.colStart + 1;
                         visibleEl.innerText = `${rows}x${cols}`;
                     }
                 }
