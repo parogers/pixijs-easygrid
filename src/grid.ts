@@ -2,13 +2,16 @@
 import * as PIXI from 'pixi.js';
 
 type GridParams = {
-    spritesheet: PIXI.Spritesheet;
+    /* The spritesheet to draw from when rendering tiles. If not specified, the
+     * grid will look up tiles in the asset cache. (or you can use a custom
+     * lookup function to resolve tiles into textures - see findTexture) */
+    spritesheet?: PIXI.Spritesheet;
     /* Whether to automatically update the state of the grid based on the shared
      * ticker. If false, you must call 'update' every frame to make sure the
      * grid is visually up to date. */
     autoUpdate?: boolean;
     /* The pixel dimensions of each tile */
-    tileSize?: Size;
+    tileSize?: Size | number;
     /* Whether to apply a mask over the grid based on the viewport. There is a
      * slight performance gain by not masking. Useful when the grid is rendered
      * from border to border, meaning the canvas element is already acting as
@@ -18,6 +21,8 @@ type GridParams = {
      * (ie. the top-left corner of viewport should appear at the x, y position
      * of the grid) */
     fixedViewport?: boolean;
+    /* The function to use when looking up textures to render */
+    findTexture?: (name: string|number) => PIXI.Texture;
 }
 
 type Size = {
@@ -32,6 +37,7 @@ type GridRange = {
     readonly colEnd: number;
 }
 
+
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
     for (let textureName in spritesheet.textures) {
         const texture = spritesheet.textures[textureName];
@@ -45,6 +51,24 @@ function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
     throw Error('cannot guess tile size from spritesheet');
 }
 
+
+function getTileSize(params: GridParams) {
+    if (!params.spritesheet && !params.tileSize) {
+        throw Error('must specify tileSize if not specifying a spritesheet');
+    }
+    if (typeof params.tileSize === 'number') {
+        return {
+            width: params.tileSize,
+            height: params.tileSize,
+        };
+    }
+    return params.tileSize ?? guessTileSize(params.spritesheet);
+}
+
+
+type TileDef = number|string;
+
+
 export class Grid extends PIXI.Container {
     /* The viewport determines what region of the grid to render. This will
      * usually correspond to the portion of the map you want to have visible
@@ -52,12 +76,15 @@ export class Grid extends PIXI.Container {
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
 
-    private tiles: number[][];
-    private tileSize: Size;
+    private tiles: TileDef[][];
+    private _tileSize: Size;
     private _autoUpdate: boolean = false;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
     private renderedGridRange: GridRange;
     private viewportMask: boolean;
+    private findTexture: FindTextureFunc;
+    // This container is what gets moved around when the viewport moves
+    private stage: PIXI.Container;
 
     constructor(params: GridParams) {
         super();
@@ -65,21 +92,36 @@ export class Grid extends PIXI.Container {
         this.spritesheet = params.spritesheet;
         this.graphics = new PIXI.Graphics();
         this.maskGraphics = new PIXI.Graphics();
-        // This container is what gets moved around when the viewport moves
         this.stage = new PIXI.Container();
         this.stage.addChild(this.graphics);
         this.stage.addChild(this.maskGraphics);
         this.addChild(this.stage);
         this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
-        this.tileSize = params.tileSize ?? guessTileSize(this.spritesheet);
+        this._tileSize = getTileSize(params);
         this.fixedViewport = params.fixedViewport ?? true;
+
+        if (params.findTexture) {
+            this.findTexture = params.findTexture;
+        } else if (this.spritesheet) {
+            this.findTexture = (tile: TileDef) => {
+                return this.spritesheet.textures[tile];
+            }
+        } else {
+            this.findTexture = (tile: TileDef) => {
+                return PIXI.Assets.cache.get(tile);
+            }
+        }
     }
 
     /* Returns the GridRange currently visible based on the viewport. Note this
      * is based on the viewport from the last rendered frame. */
     get visibleGridRange(): GridRange {
         return this.renderedGridRange;
+    }
+
+    get tileSize(): Size {
+        return this._tileSize;
     }
 
     /*
@@ -115,14 +157,14 @@ export class Grid extends PIXI.Container {
         return this.tiles[0].length;
     }
 
-    setTiles(tiles: number[][]) {
+    setTiles(tiles: TileDef[][]) {
         this.tiles = tiles;
         this.tilesDirty = true;
     }
 
-    setTile(row: number, col: number, textureName: string) {
+    setTile(row: number, col: number, tile: TileDef) {
         // TODO - bounds check
-        this.tiles[row][col] = textureName;
+        this.tiles[row][col] = tile;
         this.tilesDirty = true;
     }
 
@@ -150,7 +192,7 @@ export class Grid extends PIXI.Container {
         };
     }
 
-    renderContext(range: GridRange|null): PIXI.GraphicsContext {
+    private renderContext(range: GridRange|null): PIXI.GraphicsContext {
         if (!range) {
             range = this.getTileBounds();
         }
@@ -163,7 +205,7 @@ export class Grid extends PIXI.Container {
             for (let col = range.colStart; col <= range.colEnd; col++) {
                 const name = this.tiles[row][col]
                 if (name) {
-                    const tex = this.spritesheet.textures[name];
+                    const tex = this.findTexture(name);
                     context.texture(tex);
                 }
                 context.translate(this.tileSize.width, 0);
