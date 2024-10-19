@@ -14,6 +14,10 @@ type GridParams = {
      * from border to border, meaning the canvas element is already acting as
      * a clipping mask. */
     viewportMask?: boolean;
+    /* Whether the rendered viewport should be in a fixed position on screen.
+     * (ie. the top-left corner of viewport should appear at the x, y position
+     * of the grid) */
+    fixedViewport?: boolean;
 }
 
 type Size = {
@@ -22,10 +26,10 @@ type Size = {
 }
 
 type GridRange = {
-    rowStart: number;
-    rowEnd: number;
-    colStart: number;
-    colEnd: number;
+    readonly rowStart: number;
+    readonly rowEnd: number;
+    readonly colStart: number;
+    readonly colEnd: number;
 }
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
@@ -42,13 +46,18 @@ function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
 }
 
 export class Grid extends PIXI.Container {
-    tiles: number[][];
-    tileSize: Size;
+    /* The viewport determines what region of the grid to render. This will
+     * usually correspond to the portion of the map you want to have visible
+     * on screen. Note if either the viewport width or height are set to zero,
+     * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
-    _autoUpdate: boolean = false;
-    renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
-    renderedGridRange: GridRange;
-    viewportMask: boolean;
+
+    private tiles: number[][];
+    private tileSize: Size;
+    private _autoUpdate: boolean = false;
+    private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
+    private renderedGridRange: GridRange;
+    private viewportMask: boolean;
 
     constructor(params: GridParams) {
         super();
@@ -56,11 +65,21 @@ export class Grid extends PIXI.Container {
         this.spritesheet = params.spritesheet;
         this.graphics = new PIXI.Graphics();
         this.maskGraphics = new PIXI.Graphics();
-        this.addChild(this.graphics);
-        this.addChild(this.maskGraphics);
+        // This container is what gets moved around when the viewport moves
+        this.stage = new PIXI.Container();
+        this.stage.addChild(this.graphics);
+        this.stage.addChild(this.maskGraphics);
+        this.addChild(this.stage);
         this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
         this.tileSize = params.tileSize ?? guessTileSize(this.spritesheet);
+        this.fixedViewport = params.fixedViewport ?? true;
+    }
+
+    /* Returns the GridRange currently visible based on the viewport. Note this
+     * is based on the viewport from the last rendered frame. */
+    get visibleGridRange(): GridRange {
+        return this.renderedGridRange;
     }
 
     /*
@@ -208,6 +227,16 @@ export class Grid extends PIXI.Container {
                 newRange.rowEnd !== this.renderedGridRange.rowEnd
             ) {
                 this.tilesDirty = true;
+            }
+            // Make the grid stay in place as we pan around the map. This
+            // is probably what you want when you have a little person
+            // walking around the map etc.
+            if (this.fixedViewport) {
+                this.stage.x = -this.viewport.x;
+                this.stage.y = -this.viewport.y;
+            } else {
+                this.stage.x = 0;
+                this.stage.y = 0;
             }
             if (this.viewportMask && !this.viewport.isEmpty()) {
                 this.updateMask(this.viewport);

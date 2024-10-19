@@ -33,8 +33,6 @@
                 spritesheet: spritesheet,
             });
             grid.setTiles(getTiles());
-            grid.x = 0;
-            grid.y = 0;
             app.stage.addChild(grid);
 
             document.getElementById('size').innerText = `${grid.rows}x${grid.cols}`;
@@ -55,11 +53,6 @@
                 // Scale the viewport to always match the render area size
                 grid.viewport.width = app.renderer.width / app.stage.scale.x;
                 grid.viewport.height = app.renderer.height / app.stage.scale.y;
-                // Make the grid stay in place as we pan around the map. This
-                // is probably what you want when you have a little person
-                // walking around the map etc.
-                grid.x = -grid.viewport.x*grid.scale.x;
-                grid.y = -grid.viewport.y*grid.scale.y;
 
                 const second = Math.round(tm.lastTime/1000);
                 seconds += tm.elapsedMS/1000;
@@ -73,7 +66,7 @@
                     seconds = 0;
 
                     const visibleEl = document.getElementById('visible');
-                    const range = grid.renderedGridRange;
+                    const range = grid.visibleGridRange;
                     if (range) {
                         const rows = range.rowEnd - range.rowStart + 1;
                         const cols = range.colEnd - range.colStart + 1;

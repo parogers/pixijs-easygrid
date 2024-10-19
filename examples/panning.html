@@ -78,8 +78,6 @@
             // Note: app.stage is scaled up so the viewport is undersized here
             grid.viewport = new PIXI.Rectangle(0, 0, 300, 200);
             grid.setTiles(getTiles());
-            grid.x = 0;
-            grid.y = 0;
             app.stage.addChild(grid);
 
             const fpsEl = document.getElementById('fps');
@@ -88,11 +86,6 @@
             PIXI.Ticker.shared.add((tm) => {
                 grid.viewport.x = 25 + Math.cos(tm.lastTime/1200) * 50;
                 grid.viewport.y = 100 + Math.cos(tm.lastTime/1000) * 50;
-                // Make the grid stay in place as we pan around the map. This
-                // is probably what you want when you have a little person
-                // walking around the map etc.
-                grid.x = -grid.viewport.x*grid.scale.x;
-                grid.y = -grid.viewport.y*grid.scale.y;
 
                 const second = Math.round(tm.lastTime/1000);
                 seconds += tm.elapsedMS/1000;
