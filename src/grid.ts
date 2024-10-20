@@ -162,6 +162,21 @@ export class Grid extends PIXI.Container {
         this.tilesDirty = true;
     }
 
+    setTilesFromStrip(tiles: TileDef[], rows: number, cols: number) {
+        if (rows*cols !== tiles.length) {
+            throw Error(`rows*cols should equal number of tiles in strip (${rows}x${cols} != ${tiles.length})`);
+        }
+        this.tiles = [];
+        for (let row = 0; row < rows; row++) {
+            this.tiles.push([]);
+            for (let col = 0; col < cols; col++) {
+                const index = row * cols + col;
+                this.tiles[row].push(tiles[index]);
+            }
+        }
+        this.tileDirty = true;
+    }
+
     setTile(row: number, col: number, tile: TileDef) {
         // TODO - bounds check
         this.tiles[row][col] = tile;
