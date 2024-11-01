@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="pixijs-grid.js"></script>
+    </head>
+    <body>
+        <h1>Example: Interactivity</h1>
+
+        <script type="module">
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            app.stage.scale = 2;
+            document.body.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('tiles.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            const tiles = [
+                ['dirt-full', 'grass-nw', 'grass-n', 'grass-n', 'grass-n', 'grass-ne'],
+                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-nw', 'grass-nw-i', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
+                ['grass-sw', 'grass-s', 'grass-s', 'grass-s', 'grass-s', 'grass-se'],
+            ];
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+            });
+            grid.setTiles(tiles);
+            grid.x = 50;
+            grid.y = 25;
+            app.stage.addChild(grid);
+
+            const marker = new PIXI.Graphics(
+                new PIXI.GraphicsContext()
+                    .rect(0, 0, grid.tileSize.width, grid.tileSize.height)
+                    .stroke(0xff0000)
+                );
+            grid.foreground.addChild(marker);
+
+            app.renderer.canvas.addEventListener('click', (event) => {
+                const mapX = event.offsetX/app.stage.scale.x - grid.x;
+                const mapY = event.offsetY/app.stage.scale.y - grid.y;
+                const tile = grid.getTileAt(mapX, mapY);
+                if (tile) {
+                    marker.x = tile.x;
+                    marker.y = tile.y;
+                }
+            });
+
+            PIXI.Ticker.shared.add(tm => {
+                grid.viewport.x = 100*Math.cos(tm.lastTime/1500);
+            });
+        </script>
+    </body>
+</html>

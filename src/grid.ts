@@ -75,6 +75,7 @@ export class Grid extends PIXI.Container {
      * on screen. Note if either the viewport width or height are set to zero,
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
+    foreground: PIXI.Container = new PIXI.Container();
 
     private tiles: TileDef[][];
     private _tileSize: Size;
@@ -84,7 +85,7 @@ export class Grid extends PIXI.Container {
     private viewportMask: boolean;
     private findTexture: FindTextureFunc;
     // This container is what gets moved around when the viewport moves
-    private stage: PIXI.Container;
+    private viewContainer: PIXI.Container = new PIXI.Container();
 
     constructor(params: GridParams) {
         super();
@@ -92,10 +93,10 @@ export class Grid extends PIXI.Container {
         this.spritesheet = params.spritesheet;
         this.graphics = new PIXI.Graphics();
         this.maskGraphics = new PIXI.Graphics();
-        this.stage = new PIXI.Container();
-        this.stage.addChild(this.graphics);
-        this.stage.addChild(this.maskGraphics);
-        this.addChild(this.stage);
+        this.viewContainer.addChild(this.graphics);
+        this.viewContainer.addChild(this.maskGraphics);
+        this.viewContainer.addChild(this.foreground);
+        this.addChild(this.viewContainer);
         this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
         this._tileSize = getTileSize(params);
@@ -207,6 +208,23 @@ export class Grid extends PIXI.Container {
         };
     }
 
+    getTileAt(x: number, y: number): TileDef|null {
+        x += this.viewport.x;
+        y += this.viewport.y;
+        const row = Math.floor(y / this.tileSize.height);
+        const col = Math.floor(x / this.tileSize.width);
+        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
+            return null;
+        }
+        return {
+            tileDef: this.tiles[row][col],
+            row: row,
+            col: col,
+            x: col * this.tileSize.width,
+            y : row * this.tileSize.height,
+        };
+    }
+
     private renderContext(range: GridRange|null): PIXI.GraphicsContext {
         if (!range) {
             range = this.getTileBounds();
@@ -289,11 +307,11 @@ export class Grid extends PIXI.Container {
             // is probably what you want when you have a little person
             // walking around the map etc.
             if (this.fixedViewport) {
-                this.stage.x = -this.viewport.x;
-                this.stage.y = -this.viewport.y;
+                this.viewContainer.x = -this.viewport.x;
+                this.viewContainer.y = -this.viewport.y;
             } else {
-                this.stage.x = 0;
-                this.stage.y = 0;
+                this.viewContainer.x = 0;
+                this.viewContainer.y = 0;
             }
             if (this.viewportMask && !this.viewport.isEmpty()) {
                 this.updateMask(this.viewport);
