@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="noisejs.js"></script>
+        <script src="pixijs-grid.js"></script>
+        <script type="module">
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            app.renderer.background.color = 0xa0a0a0;
+            document.body.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('tiles.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            function getTerrain() {
+                const noise = new Noise();
+                const rows = 1000;
+                const cols = 1000;
+                const terrain = [];
+                for (let row = 0; row < rows; row++) {
+                    terrain.push([]);
+                    for (let col = 0; col < cols; col++) {
+                        const value = noise.simplex2(col/10, row/10);
+                        terrain[row].push(value > 0);
+                    }
+                }
+                return terrain;
+            }
+
+            function makeEmpty(rows, cols) {
+                const tiles = [];
+                for (let row = 0; row < rows; row++) {
+                    tiles.push(new Array(cols));
+                }
+                return tiles;
+            }
+
+            function interpolate(terrain) {
+                const rows = terrain.length;
+                const cols = terrain[0].length;
+
+                function checkTile(row, col) {
+                    return (row >= 0 && row < rows && terrain[row][col]) | 0;
+                }
+
+                function getTileAt(row, col) {
+                    const nw = checkTile(row, col);
+                    const ne = checkTile(row, col+1);
+                    const sw = checkTile(row+1, col);
+                    const se = checkTile(row+1, col+1);
+                    const mapping = {
+                        '0010' : 'grass-ne',
+                        '0101' : 'grass-w',
+                        '1011' : 'grass-ne-i',
+                        '0011' : 'grass-n',
+                        '1001' : 'grass-nw-se',
+                        '0111' : 'grass-nw-i',
+                        '1111' : 'grass-full',
+                        '1110' : 'grass-se-i',
+                        '0100' : 'grass-sw',
+                        '1100' : 'grass-s',
+                        '1101' : 'grass-sw-i',
+                        '1010' : 'grass-e',
+                        '0000' : 'dirt-full',
+                        '0001' : 'grass-nw',
+                        '0110' : 'grass-ne-sw',
+                        '1000' : 'grass-se',
+                    }
+                    const index = '' + nw + ne + sw + se;
+                    return mapping[index];
+                }
+
+                const tiles = makeEmpty(rows-1, cols-1);
+                for (let row = 0; row < rows-1; row++) {
+                    for (let col = 0; col < cols-1; col++) {
+                        tiles[row][col] = getTileAt(row, col);
+                    }
+                }
+                return tiles;
+            }
+
+            const terrain = getTerrain();
+            const tiles = interpolate(terrain);
+
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+            });
+            grid.setTiles(tiles);
+            app.stage.addChild(grid);
+
+            let samples = 0;
+            let seconds = 0;
+            let total = 0;
+            PIXI.Ticker.shared.add((tm) => {
+                grid.viewport.x = 350 + Math.cos(tm.lastTime/1200) * 300;
+                grid.viewport.y = 350 + Math.cos(tm.lastTime/1400) * 300;
+                // Scale the viewport to always match the render area size
+                grid.viewport.width = app.renderer.width / app.stage.scale.x;
+                grid.viewport.height = app.renderer.height / app.stage.scale.y;
+
+                const second = Math.round(tm.lastTime/1000);
+                seconds += tm.elapsedMS/1000;
+                total += tm.FPS;
+                samples++;
+                if (seconds > 1) {
+                    const average = total / samples;
+                    const fpsEl = document.getElementById('fps');
+                    fpsEl.innerText = '' + average;
+                    total = 0;
+                    samples = 0;
+                    seconds = 0;
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Example: dual-grid rendering</h1>
+        <p>Average FPS: <span id="fps"></span></p>
+    </body>
+</html>
