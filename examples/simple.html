@@ -17,18 +17,18 @@
 
             const spritesheet = await PIXI.Assets.load('tiles.json');
             const tiles = [
-                ['dirt-full', 'grass-nw', 'grass-n', 'grass-n', 'grass-n', 'grass-ne'],
-                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['dirt-full', 'grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-nw', 'grass-nw-i', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-w', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-e'],
-                ['grass-sw', 'grass-s', 'grass-s', 'grass-s', 'grass-s', 'grass-se'],
+                ['dirt-full', 'grass-se', 'grass-s', 'grass-s', 'grass-s', 'grass-sw'],
+                ['dirt-full', 'grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['dirt-full', 'grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-se', 'grass-nw-i', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-e', 'grass-full', 'grass-full', 'grass-full', 'grass-full', 'grass-w'],
+                ['grass-ne', 'grass-n', 'grass-n', 'grass-n', 'grass-n', 'grass-nw'],
             ];
             const grid = new easygrid.Grid({
                 spritesheet: spritesheet,

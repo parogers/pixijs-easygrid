@@ -46,22 +46,22 @@
                 tileSize: 16,
                 findTexture: (index) => {
                     const textureNames = [
-                        "grass-ne",
-                        "grass-w",
+                        "grass-sw",
+                        "grass-e",
                         "grass-ne-i",
-                        "grass-n",
+                        "grass-s",
                         "grass-nw-se",
                         "grass-nw-i",
                         "grass-full",
                         "grass-se-i",
-                        "grass-sw",
-                        "grass-s",
+                        "grass-ne",
+                        "grass-n",
                         "grass-sw-i",
-                        "grass-e",
+                        "grass-w",
                         "dirt-full",
-                        "grass-nw",
-                        "grass-ne-sw",
                         "grass-se",
+                        "grass-ne-sw",
+                        "grass-nw",
                     ];
                     const name = textureNames[index-1];
                     return PIXI.Assets.cache.get(name);

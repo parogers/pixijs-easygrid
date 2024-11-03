@@ -53,22 +53,22 @@
                     const sw = checkTile(row+1, col);
                     const se = checkTile(row+1, col+1);
                     const mapping = {
-                        '0010' : 'grass-ne',
-                        '0101' : 'grass-w',
+                        '0010' : 'grass-sw',
+                        '0101' : 'grass-e',
                         '1011' : 'grass-ne-i',
-                        '0011' : 'grass-n',
+                        '0011' : 'grass-s',
                         '1001' : 'grass-nw-se',
                         '0111' : 'grass-nw-i',
                         '1111' : 'grass-full',
                         '1110' : 'grass-se-i',
-                        '0100' : 'grass-sw',
-                        '1100' : 'grass-s',
+                        '0100' : 'grass-ne',
+                        '1100' : 'grass-n',
                         '1101' : 'grass-sw-i',
-                        '1010' : 'grass-e',
+                        '1010' : 'grass-w',
                         '0000' : 'dirt-full',
-                        '0001' : 'grass-nw',
+                        '0001' : 'grass-se',
                         '0110' : 'grass-ne-sw',
-                        '1000' : 'grass-se',
+                        '1000' : 'grass-nw',
                     }
                     const index = '' + nw + ne + sw + se;
                     return mapping[index];

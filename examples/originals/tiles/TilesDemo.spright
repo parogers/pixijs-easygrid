@@ -1,0 +1,31 @@
+
+sheet "tiles"
+    padding 1
+    output "tiles.png"
+
+description "tiles.json"
+    template "/home/peter/Downloads/spright/templates/pixijs.inja"
+
+extrude 2
+
+input "TilesDemo.png"
+    grid 16x16
+        sprite "grass-sw"
+        sprite "grass-e"
+        sprite "grass-ne-i"
+        sprite "grass-s"
+    row 1
+        sprite "grass-nw-se"
+        sprite "grass-nw-i"
+        sprite "grass-full"
+        sprite "grass-se-i"
+    row 2
+        sprite "grass-ne"
+        sprite "grass-n"
+        sprite "grass-sw-i"
+        sprite "grass-w"
+    row 3
+        sprite "dirt-full"
+        sprite "grass-se"
+        sprite "grass-ne-sw"
+        sprite "grass-nw"
