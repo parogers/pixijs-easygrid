@@ -1,6 +1,9 @@
 
 import * as PIXI from 'pixi.js';
 
+import { BaseGrid, Size } from './base-grid';
+
+
 type GridParams = {
     /* The spritesheet to draw from when rendering tiles. If not specified, the
      * grid will look up tiles in the asset cache. (or you can use a custom
@@ -23,11 +26,6 @@ type GridParams = {
     fixedViewport?: boolean;
     /* The function to use when looking up textures to render */
     findTexture?: (name: string|number) => PIXI.Texture;
-}
-
-type Size = {
-    width: number;
-    height: number;
 }
 
 type GridRange = {
@@ -66,20 +64,14 @@ function getTileSize(params: GridParams) {
 }
 
 
-type TileDef = number|string;
+export type TileDef = number|string;
 
 
-export class Grid extends PIXI.Container {
-    /* The viewport determines what region of the grid to render. This will
-     * usually correspond to the portion of the map you want to have visible
-     * on screen. Note if either the viewport width or height are set to zero,
-     * the entire grid will be rendered. */
-    viewport: PIXI.Rectangle = new PIXI.Rectangle();
+export class Grid extends BaseGrid {
     foreground: PIXI.Container = new PIXI.Container();
 
     private tiles: TileDef[][];
     private _tileSize: Size;
-    private _autoUpdate: boolean = false;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
     private renderedGridRange: GridRange;
     private viewportMask: boolean;
@@ -125,31 +117,6 @@ export class Grid extends PIXI.Container {
         return this._tileSize;
     }
 
-    /*
-     * Setting autoUpdate to true means the visible state of this grid will be
-     * updated using the shared ticker. Otherwise you'll need to update the
-     * grid state manually by calling "update" below.
-     */
-    set autoUpdate(value: boolean) {
-        if (this._autoUpdate === value) {
-            return;
-        }
-        this._autoUpdate = value;
-        if (this._autoUpdate) {
-            // Low priority means the grid update will happen after most other
-            // things get updated. So if there's an "update game" ticker that
-            // pans and moves the grid around, that will be done before the
-            // grid updates it's visual state to match what's expected.
-            PIXI.Ticker.shared.add(this.update, this, PIXI.UPDATE_PRIORITY.LOW);
-        } else {
-            PIXI.Ticker.shared.remove(this.update, this);
-        }
-    }
-
-    get autoUpdate(): boolean {
-        return this._autoUpdate;
-    }
-
     get rows(): number {
         return this.tiles.length;
     }
@@ -184,52 +151,14 @@ export class Grid extends PIXI.Container {
         this.tilesDirty = true;
     }
 
-    /*
-     * Returns the GridRange that is spanned by the current viewport
-     */
-    getTileBounds(): GridRange {
-        if (this.viewport.isEmpty()) {
-            return {
-                rowStart: 0,
-                rowEnd: this.tiles.length-1,
-                colStart: 0,
-                colEnd: this.tiles[0].length-1,
-            };
-        }
-        const rowStart = Math.max(Math.floor(this.viewport.y / this.tileSize.height), 0);
-        const colStart = Math.max(Math.floor(this.viewport.x / this.tileSize.width), 0);
-        const rowEnd = Math.min(Math.ceil((this.viewport.y + this.viewport.height) / this.tileSize.height), this.rows - 1);
-        const colEnd = Math.min(Math.ceil((this.viewport.x + this.viewport.width) / this.tileSize.width), this.cols - 1);
-        return {
-            rowStart,
-            rowEnd,
-            colStart,
-            colEnd,
-        };
-    }
-
-    getTileAt(x: number, y: number): TileDef|null {
-        x += this.viewport.x;
-        y += this.viewport.y;
-        const row = Math.floor(y / this.tileSize.height);
-        const col = Math.floor(x / this.tileSize.width);
-        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
-            return null;
-        }
-        return {
-            tileDef: this.tiles[row][col],
-            row: row,
-            col: col,
-            x: col * this.tileSize.width,
-            y : row * this.tileSize.height,
-        };
-    }
-
     private renderContext(range: GridRange|null): PIXI.GraphicsContext {
         if (!range) {
             range = this.getTileBounds();
         }
         const context = new PIXI.GraphicsContext();
+        if (!this.tiles) {
+            return context;
+        }
         context.translate(
             this.tileSize.width*range.colStart,
             this.tileSize.height*range.rowStart
