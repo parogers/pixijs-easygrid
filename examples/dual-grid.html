@@ -13,10 +13,10 @@
             app.renderer.background.color = 0xa0a0a0;
             document.body.appendChild(app.canvas);
 
-            const spritesheet = await PIXI.Assets.load('tiles.json');
+            const spritesheet = await PIXI.Assets.load('tiles-grass.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
-            function getTerrain() {
+            function generateTerrain() {
                 const noise = new Noise();
                 const rows = 1000;
                 const cols = 1000;
@@ -31,28 +31,9 @@
                 return terrain;
             }
 
-            const terrain = getTerrain();
-            const tiles = Object.keys(spritesheet.data.frames);
-            //     'grass-sw',
-            //     'grass-e',
-            //     'grass-ne-i',
-            //     'grass-s',
-            //     'grass-nw-se',
-            //     'grass-nw-i',
-            //     'grass-full',
-            //     'grass-se-i',
-            //     'grass-ne',
-            //     'grass-n',
-            //     'grass-sw-i',
-            //     'grass-w',
-            //     'dirt-full',
-            //     'grass-se',
-            //     'grass-ne-sw',
-            //     'grass-nw',
-            // ];
+            const terrain = generateTerrain();
             const dualGrid = new easygrid.DualGrid({
                 spritesheet: spritesheet,
-                tiles: tiles,
             });
             dualGrid.setTerrain(terrain);
             app.stage.addChild(dualGrid);

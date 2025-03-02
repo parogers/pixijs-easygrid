@@ -7,7 +7,7 @@ import { Grid, TileDef } from './grid';
 
 
 export type DualGridParams = {
-    tiles: TileDef[],
+    tiles?: TileDef[],
     spritesheet?: PIXI.Spritesheet,
     autoUpdate?: boolean,
 }
@@ -55,12 +55,13 @@ export class DualGrid extends BaseGrid {
 
     constructor(params: DualGridParams) {
         super();
-        if (params.tiles.length !== TILE_ORDER.length) {
+        const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
+        if (tiles.length !== TILE_ORDER.length) {
             throw Error(`tiles array length must be exactly ${TILE_ORDER.length}`);
         }
         this.tileMapping = Object.fromEntries(
             TILE_ORDER.map((key, index) => {
-                return [key, params.tiles[index]];
+                return [key, tiles[index]];
             })
         );
         this.grid = new Grid({
