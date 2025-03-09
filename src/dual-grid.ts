@@ -49,32 +49,29 @@ function makeEmpty(rows, cols) {
 }
 
 
-export class DualGrid extends BaseGrid {
+export class DualGrid extends Grid {
     terrain: boolean[][];
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
 
     constructor(params: DualGridParams) {
-        super();
+        super({
+            spritesheet: params.spritesheet,
+            autoUpdate: params.autoUpdate,
+        });
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
             throw Error(`tiles array length must be exactly ${TILE_ORDER.length}`);
         }
         this.tileMapping = Object.fromEntries(
-            TILE_ORDER.map((key, index) => {
-                return [key, tiles[index]];
-            })
+            TILE_ORDER.map((key, index) => [key, tiles[index]])
         );
-        this.grid = new Grid({
-            spritesheet: params.spritesheet,
-            autoUpdate: false,
-        });
-        this.addChild(this.grid);
-        this.autoUpdate = params.autoUpdate ?? true;
+        this.graphics.x = -this.tileSize.width/2;
+        this.graphics.y = -this.tileSize.height/2;
     }
 
     setTerrain(terrain: boolean[][]) {
         this.terrain = terrain;
-        this.grid.setTiles(this.makeTiles());
+        this.setTiles(this.makeTiles());
     }
 
     private makeTiles() {
@@ -101,10 +98,5 @@ export class DualGrid extends BaseGrid {
             }
         }
         return tiles;
-    }
-
-    update() {
-        this.grid.viewport = this.viewport;
-        this.grid.update();
     }
 }

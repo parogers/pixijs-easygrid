@@ -2,10 +2,16 @@
     <head>
         <script src="https://pixijs.download/dev/pixi.js"></script>
         <script src="require.js"></script>
+        <script src="common.js"></script>
         <script src="pixijs-grid.js"></script>
     </head>
     <body>
         <h1>Example: Interactivity</h1>
+
+        <ul>
+            <li>Click and drag the map around</li>
+            <li>Shift click to highlight a tile</li>
+        </ul>
 
         <script type="module">
             const app = new PIXI.Application();
@@ -41,26 +47,8 @@
             grid.y = 25;
             app.stage.addChild(grid);
 
-            const marker = new PIXI.Graphics(
-                new PIXI.GraphicsContext()
-                    .rect(0, 0, grid.tileSize.width, grid.tileSize.height)
-                    .stroke(0xff0000)
-                );
-            grid.foreground.addChild(marker);
-
-            app.renderer.canvas.addEventListener('click', (event) => {
-                const mapX = event.offsetX/app.stage.scale.x - grid.x;
-                const mapY = event.offsetY/app.stage.scale.y - grid.y;
-                const tile = grid.getTileAt(mapX, mapY);
-                if (tile) {
-                    marker.x = tile.x;
-                    marker.y = tile.y;
-                }
-            });
-
-            PIXI.Ticker.shared.add(tm => {
-                grid.viewport.x = 100*Math.cos(tm.lastTime/1500);
-            });
+            setupMarker(app, grid);
+            setupDragging(app, grid);
         </script>
     </body>
 </html>

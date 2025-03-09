@@ -3,6 +3,7 @@
         <script src="https://pixijs.download/dev/pixi.js"></script>
         <script src="require.js"></script>
         <script src="noisejs.js"></script>
+        <script src="common.js"></script>
         <script src="pixijs-grid.js"></script>
         <script type="module">
             const app = new PIXI.Application();
@@ -18,8 +19,8 @@
 
             function generateTerrain() {
                 const noise = new Noise();
-                const rows = 1000;
-                const cols = 1000;
+                const rows = 100;
+                const cols = 100;
                 const terrain = [];
                 for (let row = 0; row < rows; row++) {
                     terrain.push([]);
@@ -32,39 +33,24 @@
             }
 
             const terrain = generateTerrain();
-            const dualGrid = new easygrid.DualGrid({
+            const grid = new easygrid.DualGrid({
                 spritesheet: spritesheet,
             });
-            dualGrid.setTerrain(terrain);
-            app.stage.addChild(dualGrid);
+            grid.setTerrain(terrain);
+            app.stage.addChild(grid);
+            app.stage.scale.set(1.5);
 
-            let samples = 0;
-            let seconds = 0;
-            let total = 0;
-            PIXI.Ticker.shared.add((tm) => {
-                dualGrid.viewport.x = 350 + Math.cos(tm.lastTime/1200) * 300;
-                dualGrid.viewport.y = 350 + Math.cos(tm.lastTime/1400) * 300;
-                // Scale the viewport to always match the render area size
-                dualGrid.viewport.width = app.renderer.width / app.stage.scale.x;
-                dualGrid.viewport.height = app.renderer.height / app.stage.scale.y;
-
-                const second = Math.round(tm.lastTime/1000);
-                seconds += tm.elapsedMS/1000;
-                total += tm.FPS;
-                samples++;
-                if (seconds > 1) {
-                    const average = total / samples;
-                    const fpsEl = document.getElementById('fps');
-                    fpsEl.innerText = '' + average;
-                    total = 0;
-                    samples = 0;
-                    seconds = 0;
-                }
-            });
+            setupMarker(app, grid);
+            setupDragging(app, grid);
+            setupFPS('fps');
         </script>
     </head>
     <body>
         <h1>Example: dual-grid rendering</h1>
+        <ul>
+            <li>Click and drag the map around</li>
+            <li>Shift click to highlight a tile</li>
+        </ul>
         <p>Average FPS: <span id="fps"></span></p>
     </body>
 </html>

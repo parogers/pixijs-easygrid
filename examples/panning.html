@@ -2,6 +2,7 @@
     <head>
         <script src="https://pixijs.download/dev/pixi.js"></script>
         <script src="require.js"></script>
+        <script src="common.js"></script>
         <script src="pixijs-grid.js"></script>
         <script type="module">
             const app = new PIXI.Application();
@@ -72,20 +73,12 @@
             grid.setTilesFromStrip(tiles, rows, cols);
             app.stage.addChild(grid);
 
-            const fpsEl = document.getElementById('fps');
-
-            let seconds = 0;
             PIXI.Ticker.shared.add((tm) => {
                 grid.viewport.x = 25 + Math.cos(tm.lastTime/1200) * 50;
                 grid.viewport.y = 100 + Math.cos(tm.lastTime/1000) * 50;
-
-                const second = Math.round(tm.lastTime/1000);
-                seconds += tm.elapsedMS/1000;
-                if (seconds > 1) {
-                    fpsEl.innerText = '' + tm.FPS;
-                    seconds = 0;
-                }
             });
+
+            setupFPS('fps');
         </script>
     </head>
     <body>

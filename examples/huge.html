@@ -2,6 +2,7 @@
     <head>
         <script src="https://pixijs.download/dev/pixi.js"></script>
         <script src="require.js"></script>
+        <script src="common.js"></script>
         <script src="pixijs-grid.js"></script>
         <script type="module">
             const app = new PIXI.Application();
@@ -44,27 +45,18 @@
             });
             zoomEl.value = '1';
 
-            let samples = 0;
+            setupFPS('fps');
+
             let seconds = 0;
-            let total = 0;
             PIXI.Ticker.shared.add((tm) => {
                 grid.viewport.x = 350 + Math.cos(tm.lastTime/800) * 300;
                 grid.viewport.y = 350 + Math.cos(tm.lastTime/600) * 300;
                 // Scale the viewport to always match the render area size
                 grid.viewport.width = app.renderer.width / app.stage.scale.x;
                 grid.viewport.height = app.renderer.height / app.stage.scale.y;
-
-                const second = Math.round(tm.lastTime/1000);
                 seconds += tm.elapsedMS/1000;
-                total += tm.FPS;
-                samples++;
                 if (seconds > 1) {
-                    const average = total / samples;
-                    fpsEl.innerText = '' + average;
-                    total = 0;
-                    samples = 0;
                     seconds = 0;
-
                     const visibleEl = document.getElementById('visible');
                     const range = grid.visibleGridRange;
                     if (range) {
