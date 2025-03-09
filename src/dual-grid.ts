@@ -3,12 +3,12 @@ import * as PIXI from 'pixi.js';
 
 import { BaseGrid } from './base-grid';
 
-import { Grid, TileDef } from './grid';
+import { Grid, TileRef } from './grid';
 
 
 export type DualGridParams = {
-    tiles?: TileDef[],
-    spritesheet?: PIXI.Spritesheet,
+    tiles?: TileRef[],
+    spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
 }
 
@@ -40,7 +40,7 @@ const TILE_ORDER = [
 ];
 
 
-function makeEmpty(rows, cols) {
+function makeEmpty(rows: number, cols: number) {
     const tiles = [];
     for (let row = 0; row < rows; row++) {
         tiles.push(new Array(cols));
@@ -50,8 +50,9 @@ function makeEmpty(rows, cols) {
 
 
 export class DualGrid extends Grid {
-    terrain: boolean[][];
+    terrain: boolean[][] = [];
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
+    tileMapping: { [key: string] : TileRef }
 
     constructor(params: DualGridParams) {
         super({
@@ -78,11 +79,11 @@ export class DualGrid extends Grid {
         const rows = this.terrain.length;
         const cols = this.terrain[0].length;
 
-        const checkTile = (row, col) => {
-            return (row >= 0 && row < rows && this.terrain[row][col]) | 0;
+        const checkTile = (row: number, col: number): number => {
+            return +(row >= 0 && row < rows && this.terrain[row][col]);
         }
 
-        const getTileAt = (row, col) => {
+        const getTileAt = (row: number, col: number): TileRef => {
             const nw = checkTile(row, col);
             const ne = checkTile(row, col+1);
             const sw = checkTile(row+1, col);

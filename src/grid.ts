@@ -1,8 +1,9 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid, Size } from './base-grid';
+import { BaseGrid, Size, TileRef, FindTextureFunc } from './base-grid';
 
+export { TileRef }
 
 type GridParams = {
     /* The spritesheet to draw from when rendering tiles. If not specified, the
@@ -25,7 +26,7 @@ type GridParams = {
      * of the grid) */
     fixedViewport?: boolean;
     /* The function to use when looking up textures to render */
-    findTexture?: (name: string|number) => PIXI.Texture;
+    findTexture?: FindTextureFunc;
 }
 
 type GridRange = {
@@ -37,7 +38,7 @@ type GridRange = {
 
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
-    for (let textureName in spritesheet.textures) {
+    for (const textureName in spritesheet.textures) {
         const texture = spritesheet.textures[textureName];
         if (texture.width && texture.height) {
             return {
@@ -51,38 +52,43 @@ function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
 
 
 function getTileSize(params: GridParams) {
-    if (!params.spritesheet && !params.tileSize) {
-        throw Error('must specify tileSize if not specifying a spritesheet');
-    }
     if (typeof params.tileSize === 'number') {
         return {
             width: params.tileSize,
             height: params.tileSize,
         };
     }
-    return params.tileSize ?? guessTileSize(params.spritesheet);
+    if (params.tileSize) {
+        return params.tileSize;
+    }
+    if (params.spritesheet) {
+        return guessTileSize(params.spritesheet);
+    }
+    throw Error('must specify tileSize if not specifying a spritesheet');
 }
-
-
-export type TileDef = number|string;
 
 
 export class Grid extends BaseGrid {
     foreground: PIXI.Container = new PIXI.Container();
 
-    private tiles: TileDef[][];
+    private tiles: TileRef[][] = [];
     private _tileSize: Size;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
-    private renderedGridRange: GridRange;
+    private renderedGridRange: GridRange | null = null;
     private viewportMask: boolean;
     private findTexture: FindTextureFunc;
     // This container is what gets moved around when the viewport moves
     private viewContainer: PIXI.Container = new PIXI.Container();
+    protected graphics: PIXI.Graphics;
+    private maskGraphics: PIXI.Graphics;
+    private fixedViewport: boolean = true;
+    private tilesDirty: boolean = false;
+    private spritesheet: PIXI.Spritesheet|null;
 
     constructor(params: GridParams) {
         super();
         this.tilesDirty = true;
-        this.spritesheet = params.spritesheet;
+        this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
         this.maskGraphics = new PIXI.Graphics();
         this.viewContainer.addChild(this.graphics);
@@ -97,11 +103,14 @@ export class Grid extends BaseGrid {
         if (params.findTexture) {
             this.findTexture = params.findTexture;
         } else if (this.spritesheet) {
-            this.findTexture = (tile: TileDef) => {
+            this.findTexture = (tile: TileRef) => {
+                if (!this.spritesheet) {
+                    return null;
+                }
                 return this.spritesheet.textures[tile];
             }
         } else {
-            this.findTexture = (tile: TileDef) => {
+            this.findTexture = (tile: TileRef) => {
                 return PIXI.Assets.cache.get(tile);
             }
         }
@@ -109,7 +118,7 @@ export class Grid extends BaseGrid {
 
     /* Returns the GridRange currently visible based on the viewport. Note this
      * is based on the viewport from the last rendered frame. */
-    get visibleGridRange(): GridRange {
+    get visibleGridRange(): GridRange|null {
         return this.renderedGridRange;
     }
 
@@ -125,12 +134,12 @@ export class Grid extends BaseGrid {
         return this.tiles[0].length;
     }
 
-    setTiles(tiles: TileDef[][]) {
+    setTiles(tiles: TileRef[][]) {
         this.tiles = tiles;
         this.tilesDirty = true;
     }
 
-    setTilesFromStrip(tiles: TileDef[], rows: number, cols: number) {
+    setTilesFromStrip(tiles: TileRef[], rows: number, cols: number) {
         if (rows*cols !== tiles.length) {
             throw Error(`rows*cols should equal number of tiles in strip (${rows}x${cols} != ${tiles.length})`);
         }
@@ -142,10 +151,10 @@ export class Grid extends BaseGrid {
                 this.tiles[row].push(tiles[index]);
             }
         }
-        this.tileDirty = true;
+        this.tilesDirty = true;
     }
 
-    setTile(row: number, col: number, tile: TileDef) {
+    setTile(row: number, col: number, tile: TileRef) {
         // TODO - bounds check
         this.tiles[row][col] = tile;
         this.tilesDirty = true;
@@ -156,7 +165,7 @@ export class Grid extends BaseGrid {
             range = this.getTileBounds();
         }
         const context = new PIXI.GraphicsContext();
-        if (!this.tiles) {
+        if (!this.tiles || !range) {
             return context;
         }
         context.translate(
@@ -168,7 +177,9 @@ export class Grid extends BaseGrid {
                 const name = this.tiles[row][col]
                 if (name) {
                     const tex = this.findTexture(name);
-                    context.texture(tex);
+                    if (tex) {
+                        context.texture(tex);
+                    }
                 }
                 context.translate(this.tileSize.width, 0);
             }
@@ -225,10 +236,12 @@ export class Grid extends BaseGrid {
             newRange = this.getTileBounds();
             if (
                 !this.renderedGridRange ||
-                newRange.colStart !== this.renderedGridRange.colStart ||
-                newRange.rowStart !== this.renderedGridRange.rowStart ||
-                newRange.colEnd !== this.renderedGridRange.colEnd ||
-                newRange.rowEnd !== this.renderedGridRange.rowEnd
+                newRange && (
+                    newRange.colStart !== this.renderedGridRange.colStart ||
+                    newRange.rowStart !== this.renderedGridRange.rowStart ||
+                    newRange.colEnd !== this.renderedGridRange.colEnd ||
+                    newRange.rowEnd !== this.renderedGridRange.rowEnd
+                )
             ) {
                 this.tilesDirty = true;
             }
@@ -255,5 +268,54 @@ export class Grid extends BaseGrid {
             this.graphics.context = context;
             this.tilesDirty = false;
         }
+    }
+
+    /*
+     * Returns the GridRange that is spanned by the current viewport
+     */
+    getTileBounds(): GridRange {
+        if (!this.tiles) {
+            return {
+                rowStart: 0,
+                rowEnd: 0,
+                colStart: 0,
+                colEnd: 0,
+            };
+        }
+        if (this.viewport.isEmpty()) {
+            return {
+                rowStart: 0,
+                rowEnd: this.rows - 1,
+                colStart: 0,
+                colEnd: this.cols - 1,
+            };
+        }
+        const rowStart = Math.max(Math.floor(this.viewport.y / this.tileSize.height), 0);
+        const colStart = Math.max(Math.floor(this.viewport.x / this.tileSize.width), 0);
+        const rowEnd = Math.min(Math.ceil((this.viewport.y + this.viewport.height) / this.tileSize.height), this.rows - 1);
+        const colEnd = Math.min(Math.ceil((this.viewport.x + this.viewport.width) / this.tileSize.width), this.cols - 1);
+        return {
+            rowStart,
+            rowEnd,
+            colStart,
+            colEnd,
+        };
+    }
+
+    getTileAt(x: number, y: number): any {
+        x += this.viewport.x;
+        y += this.viewport.y;
+        const row = Math.floor(y / this.tileSize.height);
+        const col = Math.floor(x / this.tileSize.width);
+        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
+            return null;
+        }
+        return {
+            tileRef: this.tiles[row][col],
+            row: row,
+            col: col,
+            x: col * this.tileSize.width,
+            y : row * this.tileSize.height,
+        };
     }
 }

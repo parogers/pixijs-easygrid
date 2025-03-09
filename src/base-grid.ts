@@ -2,10 +2,14 @@
 import * as PIXI from 'pixi.js';
 
 
-type Size = {
+export type Size = {
     width: number;
     height: number;
 }
+
+export type FindTextureFunc = (name: string|number) => PIXI.Texture|null;
+
+export type TileRef = number|string;
 
 /*
  * All grids should extend from this class. Unless you're doing something
@@ -60,55 +64,6 @@ export class BaseGrid extends PIXI.Container {
         return {
             width: 0,
             height: 0,
-        };
-    }
-
-    /*
-     * Returns the GridRange that is spanned by the current viewport
-     */
-    getTileBounds(): GridRange {
-        if (!this.tiles) {
-            return {
-                rowStart: 0,
-                rowEnd: 0,
-                colStart: 0,
-                colEnd: 0,
-            };
-        }
-        if (this.viewport.isEmpty()) {
-            return {
-                rowStart: 0,
-                rowEnd: this.rows - 1,
-                colStart: 0,
-                colEnd: this.cols - 1,
-            };
-        }
-        const rowStart = Math.max(Math.floor(this.viewport.y / this.tileSize.height), 0);
-        const colStart = Math.max(Math.floor(this.viewport.x / this.tileSize.width), 0);
-        const rowEnd = Math.min(Math.ceil((this.viewport.y + this.viewport.height) / this.tileSize.height), this.rows - 1);
-        const colEnd = Math.min(Math.ceil((this.viewport.x + this.viewport.width) / this.tileSize.width), this.cols - 1);
-        return {
-            rowStart,
-            rowEnd,
-            colStart,
-            colEnd,
-        };
-    }
-
-    getTileAt(x: number, y: number): TileDef|null {
-        x += this.viewport.x;
-        y += this.viewport.y;
-        const row = Math.floor(y / this.tileSize.height);
-        const col = Math.floor(x / this.tileSize.width);
-        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
-            return null;
-        }
-        return {
-            tileDef: this.tiles[row][col],
-            row: row,
-            col: col,
-            x: col * this.tileSize.width,
-            y : row * this.tileSize.height,
         };
     }
 
