@@ -19,8 +19,8 @@
 
             function generateTerrain() {
                 const noise = new Noise();
-                const rows = 100;
-                const cols = 100;
+                const rows = 20;
+                const cols = 20;
                 const terrain = [];
                 for (let row = 0; row < rows; row++) {
                     terrain.push([]);
@@ -34,13 +34,14 @@
 
             const terrain = generateTerrain();
             const grid = new easygrid.DualGrid({
+                tileRef: 'grass',
                 spritesheet: spritesheet,
             });
             grid.setTerrain(terrain);
             app.stage.addChild(grid);
             app.stage.scale.set(1.5);
 
-            setupMarker(app, grid);
+            setupMarker(app, grid, 'tile-info');
             setupDragging(app, grid);
             setupFPS('fps');
         </script>
@@ -48,9 +49,11 @@
     <body>
         <h1>Example: dual-grid rendering</h1>
         <ul>
+            <li><a href="https://www.youtube.com/watch?v=jEWFSv3ivTg">Watch this explanation</a> of dual-grid rendering</li>
             <li>Click and drag the map around</li>
             <li>Shift click to highlight a tile</li>
         </ul>
         <p>Average FPS: <span id="fps"></span></p>
+        <p>Selected tile: <span id="tile-info"></span></p>
     </body>
 </html>

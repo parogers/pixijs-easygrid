@@ -13,6 +13,8 @@
             <li>Shift click to highlight a tile</li>
         </ul>
 
+        <p>Selected tile: <span id="tile-info"></span></p>
+
         <script type="module">
             const app = new PIXI.Application();
             await app.init({
@@ -47,7 +49,7 @@
             grid.y = 25;
             app.stage.addChild(grid);
 
-            setupMarker(app, grid);
+            setupMarker(app, grid, 'tile-info');
             setupDragging(app, grid);
         </script>
     </body>

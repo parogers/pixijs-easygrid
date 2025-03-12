@@ -16,11 +16,17 @@ export type TileRef = number|string;
  * custom you probably don't need this.
  */
 export class BaseGrid extends PIXI.Container {
+    /* Sprites in this container will appear above the rendered grid. Note this
+     * container shares the same coordinate system with the map and so shifting
+     * the viewport around moves both the map and this container. */
+    foreground: PIXI.Container = new PIXI.Container();
+
     /* The viewport determines what region of the grid to render. This will
      * usually correspond to the portion of the map you want to have visible
      * on screen. Note if either the viewport width or height are set to zero,
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
+
     private _autoUpdate: boolean = false;
 
     constructor() {

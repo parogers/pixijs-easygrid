@@ -3,10 +3,11 @@ import * as PIXI from 'pixi.js';
 
 import { BaseGrid } from './base-grid';
 
-import { Grid, TileRef } from './grid';
+import { Grid, GridTile, TileRef } from './grid';
 
 
 export type DualGridParams = {
+    tileRef: string;
     tiles?: TileRef[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
@@ -49,16 +50,21 @@ function makeEmpty(rows: number, cols: number) {
 }
 
 
-export class DualGrid extends Grid {
+export class DualGrid extends BaseGrid {
     terrain: boolean[][] = [];
-    viewport: PIXI.Rectangle = new PIXI.Rectangle();
     tileMapping: { [key: string] : TileRef }
+    tileRef: string = '';
+    grid: Grid;
+    viewContainer: PIXI.Container;
 
     constructor(params: DualGridParams) {
-        super({
+        super();
+        this.grid = new Grid({
             spritesheet: params.spritesheet,
-            autoUpdate: params.autoUpdate,
-        });
+            autoUpdate: false,
+        })
+        this.autoUpdate = params.autoUpdate ?? true;
+        this.tileRef = params.tileRef;
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
             throw Error(`tiles array length must be exactly ${TILE_ORDER.length}`);
@@ -66,13 +72,29 @@ export class DualGrid extends Grid {
         this.tileMapping = Object.fromEntries(
             TILE_ORDER.map((key, index) => [key, tiles[index]])
         );
-        this.graphics.x = -this.tileSize.width/2;
-        this.graphics.y = -this.tileSize.height/2;
+        this.grid.x = this.tileSize.width/2;
+        this.grid.y = this.tileSize.height/2;
+        this.viewContainer = new PIXI.Container();
+        this.viewContainer.addChild(this.grid);
+        this.viewContainer.addChild(this.foreground);
+        this.addChild(this.viewContainer);
+    }
+
+    get rows(): number {
+        return this.terrain.length;
+    }
+
+    get cols(): number {
+        return this.terrain[0].length;
+    }
+
+    get tileSize(): Size {
+        return this.grid.tileSize;
     }
 
     setTerrain(terrain: boolean[][]) {
         this.terrain = terrain;
-        this.setTiles(this.makeTiles());
+        this.grid.setTiles(this.makeTiles());
     }
 
     private makeTiles() {
@@ -99,5 +121,30 @@ export class DualGrid extends Grid {
             }
         }
         return tiles;
+    }
+
+    getTileAt(x: number, y: number): GridTile {
+        x += this.viewport.x;
+        y += this.viewport.y;
+        const row = Math.floor(y / this.tileSize.height);
+        const col = Math.floor(x / this.tileSize.width);
+        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
+            return null;
+        }
+        const tileRef = this.terrain[row][col] ? this.tileRef : '';
+        return {
+            tileRef: tileRef,
+            row: row,
+            col: col,
+            x: col * this.tileSize.width,
+            y : row * this.tileSize.height,
+        };
+    }
+
+    update() {
+        this.foreground.x = -this.viewport.x;
+        this.foreground.y = -this.viewport.y;
+        this.grid.viewport = this.viewport;
+        this.grid.update();
     }
 }

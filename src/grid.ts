@@ -36,6 +36,14 @@ type GridRange = {
     readonly colEnd: number;
 }
 
+export type GridTile = {
+    tileRef: TileRef;
+    row: number;
+    col: number
+    x: number;
+    y: number;
+}
+
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
     for (const textureName in spritesheet.textures) {
@@ -69,8 +77,6 @@ function getTileSize(params: GridParams) {
 
 
 export class Grid extends BaseGrid {
-    foreground: PIXI.Container = new PIXI.Container();
-
     private tiles: TileRef[][] = [];
     private _tileSize: Size;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
@@ -302,7 +308,7 @@ export class Grid extends BaseGrid {
         };
     }
 
-    getTileAt(x: number, y: number): any {
+    getTileAt(x: number, y: number): GridTile {
         x += this.viewport.x;
         y += this.viewport.y;
         const row = Math.floor(y / this.tileSize.height);

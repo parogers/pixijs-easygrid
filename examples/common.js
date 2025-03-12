@@ -48,8 +48,9 @@ function setupFPS(elementID) {
 }
 
 
-function setupMarker(app, grid) {
+function setupMarker(app, grid, elementID) {
     const marker = makeBox(grid.tileSize.width, grid.tileSize.height);
+    marker.alpha = 0;
     grid.foreground.addChild(marker);
 
     app.renderer.canvas.addEventListener('click', (event) => {
@@ -58,9 +59,13 @@ function setupMarker(app, grid) {
             const mapY = event.offsetY/app.stage.scale.y - grid.y;
             const tile = grid.getTileAt(mapX, mapY);
             if (tile) {
+                marker.alpha = 1;
                 marker.x = tile.x;
                 marker.y = tile.y;
-                console.log(tile);
+                const div = document.getElementById(elementID);
+                if (div) {
+                    div.innerText = `${tile.tileRef || 'NA'} (${tile.row}, ${tile.col})`;
+                }
             }
         }
     });
