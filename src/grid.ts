@@ -1,7 +1,14 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid, Size, TileRef, FindTextureFunc } from './base-grid';
+import {
+    BaseGrid,
+    Size,
+    TileRef,
+    FindTextureFunc,
+    GridTile,
+    GridRange,
+} from './base-grid';
 
 export { TileRef }
 
@@ -28,22 +35,6 @@ type GridParams = {
     /* The function to use when looking up textures to render */
     findTexture?: FindTextureFunc;
 }
-
-type GridRange = {
-    readonly rowStart: number;
-    readonly rowEnd: number;
-    readonly colStart: number;
-    readonly colEnd: number;
-}
-
-export type GridTile = {
-    tileRef: TileRef;
-    row: number;
-    col: number
-    x: number;
-    y: number;
-}
-
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
     for (const textureName in spritesheet.textures) {
@@ -83,8 +74,6 @@ export class Grid extends BaseGrid {
     private renderedGridRange: GridRange | null = null;
     private viewportMask: boolean;
     private findTexture: FindTextureFunc;
-    // This container is what gets moved around when the viewport moves
-    private viewContainer: PIXI.Container = new PIXI.Container();
     protected graphics: PIXI.Graphics;
     private maskGraphics: PIXI.Graphics;
     private fixedViewport: boolean = true;
@@ -97,10 +86,8 @@ export class Grid extends BaseGrid {
         this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
         this.maskGraphics = new PIXI.Graphics();
-        this.viewContainer.addChild(this.graphics);
-        this.viewContainer.addChild(this.maskGraphics);
-        this.viewContainer.addChild(this.foreground);
-        this.addChild(this.viewContainer);
+        this.gridContainer.addChild(this.graphics);
+        this.gridContainer.addChild(this.maskGraphics);
         this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
         this._tileSize = getTileSize(params);
@@ -276,52 +263,10 @@ export class Grid extends BaseGrid {
         }
     }
 
-    /*
-     * Returns the GridRange that is spanned by the current viewport
-     */
-    getTileBounds(): GridRange {
-        if (!this.tiles) {
-            return {
-                rowStart: 0,
-                rowEnd: 0,
-                colStart: 0,
-                colEnd: 0,
-            };
-        }
-        if (this.viewport.isEmpty()) {
-            return {
-                rowStart: 0,
-                rowEnd: this.rows - 1,
-                colStart: 0,
-                colEnd: this.cols - 1,
-            };
-        }
-        const rowStart = Math.max(Math.floor(this.viewport.y / this.tileSize.height), 0);
-        const colStart = Math.max(Math.floor(this.viewport.x / this.tileSize.width), 0);
-        const rowEnd = Math.min(Math.ceil((this.viewport.y + this.viewport.height) / this.tileSize.height), this.rows - 1);
-        const colEnd = Math.min(Math.ceil((this.viewport.x + this.viewport.width) / this.tileSize.width), this.cols - 1);
-        return {
-            rowStart,
-            rowEnd,
-            colStart,
-            colEnd,
-        };
-    }
-
-    getTileAt(x: number, y: number): GridTile {
-        x += this.viewport.x;
-        y += this.viewport.y;
-        const row = Math.floor(y / this.tileSize.height);
-        const col = Math.floor(x / this.tileSize.width);
+    getTileRefAt(row: number, col: number): TileRef|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
-        return {
-            tileRef: this.tiles[row][col],
-            row: row,
-            col: col,
-            x: col * this.tileSize.width,
-            y : row * this.tileSize.height,
-        };
+        return this.tiles[row][col];
     }
 }

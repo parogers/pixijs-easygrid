@@ -1,9 +1,9 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid } from './base-grid';
+import { BaseGrid, GridTile, TileRef, Size } from './base-grid';
 
-import { Grid, GridTile, TileRef } from './grid';
+import { Grid } from './grid';
 
 
 export type DualGridParams = {
@@ -55,7 +55,6 @@ export class DualGrid extends BaseGrid {
     tileMapping: { [key: string] : TileRef }
     tileRef: string = '';
     grid: Grid;
-    viewContainer: PIXI.Container;
 
     constructor(params: DualGridParams) {
         super();
@@ -74,10 +73,7 @@ export class DualGrid extends BaseGrid {
         );
         this.grid.x = this.tileSize.width/2;
         this.grid.y = this.tileSize.height/2;
-        this.viewContainer = new PIXI.Container();
-        this.viewContainer.addChild(this.grid);
-        this.viewContainer.addChild(this.foreground);
-        this.addChild(this.viewContainer);
+        this.gridContainer.addChild(this.grid);
     }
 
     get rows(): number {
@@ -123,22 +119,12 @@ export class DualGrid extends BaseGrid {
         return tiles;
     }
 
-    getTileAt(x: number, y: number): GridTile {
-        x += this.viewport.x;
-        y += this.viewport.y;
-        const row = Math.floor(y / this.tileSize.height);
-        const col = Math.floor(x / this.tileSize.width);
+    getTileRefAt(row: number, col: number): TileRef|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
         const tileRef = this.terrain[row][col] ? this.tileRef : '';
-        return {
-            tileRef: tileRef,
-            row: row,
-            col: col,
-            x: col * this.tileSize.width,
-            y : row * this.tileSize.height,
-        };
+        return tileRef;
     }
 
     update() {
