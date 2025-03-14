@@ -128,9 +128,11 @@ export class DualGrid extends BaseGrid {
     }
 
     update() {
+        super.update();
         this.foreground.x = -this.viewport.x;
         this.foreground.y = -this.viewport.y;
-        this.grid.viewport = this.viewport;
+        this.grid.viewport.x = this.viewport.x;
+        this.grid.viewport.y = this.viewport.y;
         this.grid.update();
     }
 }

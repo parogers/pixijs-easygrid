@@ -2,6 +2,10 @@
 import * as PIXI from 'pixi.js';
 
 
+export type BaseGridParams = {
+    viewportMask?: boolean;
+}
+
 export type Size = {
     width: number;
     height: number;
@@ -39,20 +43,30 @@ export class BaseGrid extends PIXI.Container {
     viewContainer: PIXI.Container = new PIXI.Container();
     /* This is the container that should hold the grid sprite(s) */
     gridContainer: PIXI.Container = new PIXI.Container();
-
     /* The viewport determines what region of the grid to render. This will
      * usually correspond to the portion of the map you want to have visible
      * on screen. Note if either the viewport width or height are set to zero,
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
-
+    /* Used to define the bounds of the viewport mask */
+    private maskGraphics: PIXI.Graphics;
+    /* The viewport size on the previous iteration. Used to update the mask. */
+    private oldViewportWidth: number = -1;
+    private oldViewportHeight: number = -1;
+    /* Whether to use the viewport to mask the rendered grid and foreground
+     * objects. You probably want this especially for large grids because they
+     * can optimize for rendering to a viewport that's smaller than the grid. */
+    private viewportMask: boolean = true;
     private _autoUpdate: boolean = false;
 
-    constructor() {
+    constructor(params: BaseGridParams = {}) {
         super();
+        this.viewportMask = params.viewportMask ?? true;
         this.viewContainer.addChild(this.gridContainer);
         this.viewContainer.addChild(this.foreground);
         this.addChild(this.viewContainer);
+        this.maskGraphics = new PIXI.Graphics();
+        this.addChild(this.maskGraphics);
     }
 
     /*
@@ -95,7 +109,36 @@ export class BaseGrid extends PIXI.Container {
         };
     }
 
-    update() {}
+    private updateMask() {
+        if (this.mask) {
+            this.maskGraphics.context.destroy();
+            this.mask = null;
+        }
+        if (this.viewportMask && !this.viewport.isEmpty()) {
+            const context = new PIXI.GraphicsContext()
+                .rect(
+                    0,
+                    0,
+                    this.viewport.width,
+                    this.viewport.height
+                ).fill()
+            this.maskGraphics.context = context;
+            this.mask = this.maskGraphics;
+        }
+    }
+
+    /* Subclasses should call this every frame to update the viewport state */
+    update() {
+        const updateViewportSize = (
+            this.viewport.width !== this.oldViewportWidth ||
+            this.viewport.height !== this.oldViewportHeight
+        );
+        if (this.viewportMask && updateViewportSize) {
+            this.updateMask();
+            this.oldViewportWidth = this.viewport.width;
+            this.oldViewportHeight = this.viewport.height;
+        }
+    }
 
     getTileRefAt(row: number, col: number): TileRef|null {
         return null;

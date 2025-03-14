@@ -72,24 +72,21 @@ export class Grid extends BaseGrid {
     private _tileSize: Size;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
     private renderedGridRange: GridRange | null = null;
-    private viewportMask: boolean;
     private findTexture: FindTextureFunc;
-    protected graphics: PIXI.Graphics;
-    private maskGraphics: PIXI.Graphics;
+    private graphics: PIXI.Graphics;
     private fixedViewport: boolean = true;
     private tilesDirty: boolean = false;
     private spritesheet: PIXI.Spritesheet|null;
 
     constructor(params: GridParams) {
-        super();
+        super({
+            viewportMask: params.viewportMask,
+        });
         this.tilesDirty = true;
         this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
-        this.maskGraphics = new PIXI.Graphics();
         this.gridContainer.addChild(this.graphics);
-        this.gridContainer.addChild(this.maskGraphics);
         this.autoUpdate = params.autoUpdate ?? true;
-        this.viewportMask = params.viewportMask ?? true;
         this._tileSize = getTileSize(params);
         this.fixedViewport = params.fixedViewport ?? true;
 
@@ -189,24 +186,6 @@ export class Grid extends BaseGrid {
         return context;
     }
 
-    private updateMask(viewport: PIXI.Rectangle) {
-        if (this.graphics.mask) {
-            this.maskGraphics.context.destroy();
-            this.graphics.mask = null;
-        }
-        if (this.viewportMask) {
-            const context = new PIXI.GraphicsContext()
-                .rect(
-                    viewport.x,
-                    viewport.y,
-                    viewport.width,
-                    viewport.height
-                ).fill()
-            this.maskGraphics.context = context;
-            this.graphics.mask = this.maskGraphics;
-        }
-    }
-
     /*
      * Updates the visible state of this grid by rendering the underlying
      * tiles and textures. Note it's safe to call this function repeatedly.
@@ -216,6 +195,8 @@ export class Grid extends BaseGrid {
      * object. (ie. autoUpdate is false)
      */
     update() {
+        super.update();
+
         const updateViewport = (
             this.viewport && (
             this.renderedViewport.isEmpty() ||
@@ -247,9 +228,6 @@ export class Grid extends BaseGrid {
             } else {
                 this.viewContainer.x = 0;
                 this.viewContainer.y = 0;
-            }
-            if (this.viewportMask && !this.viewport.isEmpty()) {
-                this.updateMask(this.viewport);
             }
         }
 
