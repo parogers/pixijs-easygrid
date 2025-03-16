@@ -79,3 +79,21 @@ function makeBox(width, height) {
             .stroke(0xff0000)
         );
 }
+
+
+/*
+ * Create a terrain for use with dual-grid rendering. Returns a matrix of
+ * random binary values based on a perlin noise filter that looks terrain-like.
+ */
+function generateTerrain(rows, cols) {
+    const noise = new Noise();
+    const terrain = [];
+    for (let row = 0; row < rows; row++) {
+        terrain.push([]);
+        for (let col = 0; col < cols; col++) {
+            const value = noise.simplex2(col/10, row/10);
+            terrain[row].push(value > 0);
+        }
+    }
+    return terrain;
+}

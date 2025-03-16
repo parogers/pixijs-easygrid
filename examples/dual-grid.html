@@ -17,22 +17,7 @@
             const spritesheet = await PIXI.Assets.load('tiles-grass.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
-            function generateTerrain() {
-                const noise = new Noise();
-                const rows = 20;
-                const cols = 20;
-                const terrain = [];
-                for (let row = 0; row < rows; row++) {
-                    terrain.push([]);
-                    for (let col = 0; col < cols; col++) {
-                        const value = noise.simplex2(col/10, row/10);
-                        terrain[row].push(value > 0);
-                    }
-                }
-                return terrain;
-            }
-
-            const terrain = generateTerrain();
+            const terrain = generateTerrain(20, 20);
             const grid = new easygrid.DualGrid({
                 tileRef: 'grass',
                 spritesheet: spritesheet,

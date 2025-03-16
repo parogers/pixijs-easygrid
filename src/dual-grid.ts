@@ -1,3 +1,7 @@
+/*
+ * This is a simple dual-grid implementation based work by Jess Hammer.
+ * (see https://github.com/jess-hammer/dual-grid-tilemap-system-unity)
+ */
 
 import * as PIXI from 'pixi.js';
 
@@ -11,6 +15,7 @@ export type DualGridParams = {
     tiles?: TileRef[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
+    terrain?: boolean[][],
 }
 
 
@@ -49,7 +54,29 @@ function makeEmpty(rows: number, cols: number) {
     return tiles;
 }
 
-
+/*
+ * A dual-grid that renders based on a simple boolean terrain map. A true value
+ * indicates the presence of a terrain type (given by tileRef), and a false
+ * value indicates the absence. The provided spritesheet should contain exactly
+ * 16 tiles arranged in a 4x4 grid following this template:
+ *
+ *      OO OX XO OO
+ *      XO OX XX XX
+ *
+ *      XO OX XX XX
+ *      OX XX XX XO
+ *
+ *      OX XX XX XO
+ *      OO OO OX XO
+ *
+ *      OO OO OX XO
+ *      OO OX XO OO
+ *
+ * Where X = looks like the terrain, O = is either fully transparent or looks
+ * like another type of terrain. (eg. X=grass, O=dirt) Note: the spritesheet
+ * should name the tiles so that, when sorted alphabetically, they match the
+ * order in the above template. (when reading across the first row, second, etc)
+ */
 export class DualGrid extends BaseGrid {
     terrain: boolean[][] = [];
     tileMapping: { [key: string] : TileRef }
@@ -74,6 +101,9 @@ export class DualGrid extends BaseGrid {
         this.grid.x = this.tileSize.width/2;
         this.grid.y = this.tileSize.height/2;
         this.gridContainer.addChild(this.grid);
+        if (params.terrain) {
+            this.setTerrain(params.terrain);
+        }
     }
 
     get rows(): number {

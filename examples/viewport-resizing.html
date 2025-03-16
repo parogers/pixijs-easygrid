@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="noisejs.js"></script>
+        <script src="common.js"></script>
+        <script src="pixijs-grid.js"></script>
+        <script type="module">
+            const div = document.getElementById('app');
+            const app = new PIXI.Application();
+            await app.init({
+                resizeTo: window,
+            });
+            div.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('tiles-grass.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            const grid = new easygrid.DualGrid({
+                tileRef: 'grass',
+                spritesheet: spritesheet,
+                terrain: generateTerrain(100, 100),
+            });
+            grid.viewport.x = 150;
+            grid.viewport.y = 150;
+            grid.viewport.width = 250;
+            grid.viewport.height = 200;
+            app.stage.addChild(grid);
+            setupDragging(app, grid);
+            setupMarker(app, grid);
+
+            // Dynamically resize the game world to fit available space
+            app.renderer.on('resize', () => {
+                easygrid.scaleToViewport(
+                    app,
+                    {
+                        width: grid.viewport.width,
+                        height: grid.viewport.height,
+                    },
+                );
+            });
+            app.renderer.emit('resize');
+        </script>
+        <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #app {
+            flex-shrink: 1;
+            flex-grow: 1;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+        </div>
+    </body>
+</html>
