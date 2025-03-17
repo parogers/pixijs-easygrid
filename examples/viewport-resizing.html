@@ -48,13 +48,28 @@
             padding: 0;
         }
 
-        #app {
-            flex-shrink: 1;
-            flex-grow: 1;
+        dialog {
+            outline: none;
+            border: none;
+            top: 1em;
+            border-radius: 1em;
+            max-width: 40ch;
+        }
+
+        h1 {
+            font-size: 1.1rem;
         }
         </style>
     </head>
     <body>
+        <dialog open>
+            <h1>Example: viewport resizing</h1>
+            <p>This example has the game world automatically scale to fit the page.</p>
+            <form method="dialog">
+                <button>Dismiss</button>
+            </form>
+        </dialog>
+
         <div id="app">
         </div>
     </body>
