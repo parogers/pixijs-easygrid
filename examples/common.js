@@ -10,17 +10,29 @@ function setupDragging(app, grid) {
 
     app.renderer.canvas.addEventListener('mousedown', (event) => {
         if (!event.shiftKey) {
+            const pos = mouseToViewportPos(
+                app,
+                grid,
+                event.offsetX,
+                event.offsetY
+            );
             mouseDown = true;
-            dragStartX = event.offsetX;
-            dragStartY = event.offsetY;
+            dragStartX = pos.x;
+            dragStartY = pos.y;
             viewportStart = grid.viewport.clone();
         }
     });
 
     app.renderer.canvas.addEventListener('mousemove', (event) => {
         if (mouseDown) {
-            const dx = (event.offsetX - dragStartX) / app.stage.scale.x;
-            const dy = (event.offsetY - dragStartY) / app.stage.scale.y;
+            const pos = mouseToViewportPos(
+                app,
+                grid,
+                event.offsetX,
+                event.offsetY
+            );
+            const dx = pos.x - dragStartX;
+            const dy = pos.y - dragStartY;
             grid.viewport.x = viewportStart.x - dx;
             grid.viewport.y = viewportStart.y - dy;
         }
@@ -96,4 +108,11 @@ function generateTerrain(rows, cols) {
         }
     }
     return terrain;
+}
+
+
+function mouseToViewportPos(app, grid, x, y) {
+    const viewX = x/app.stage.scale.x - grid.x;
+    const viewY = y/app.stage.scale.y - grid.y;
+    return { x: viewX, y: viewY };
 }

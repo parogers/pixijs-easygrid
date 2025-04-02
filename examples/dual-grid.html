@@ -17,14 +17,32 @@
             const spritesheet = await PIXI.Assets.load('tiles-grass.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
-            const terrain = generateTerrain(20, 20);
+            const terrain = generateTerrain(100, 100);
             const grid = new easygrid.DualGrid({
                 tileRef: 'grass',
                 spritesheet: spritesheet,
+                terrain: terrain,
             });
-            grid.setTerrain(terrain);
+            grid.viewport.x = 50;
+            grid.viewport.y = 50;
             app.stage.addChild(grid);
             app.stage.scale.set(1.5);
+
+            // Let the user click around the map and change the terrain
+            app.renderer.canvas.addEventListener('click', (event) => {
+                if (event.ctrlKey) {
+                    const { x, y } = mouseToViewportPos(
+                        app,
+                        grid,
+                        event.offsetX,
+                        event.offsetY
+                    );
+                    const tile = grid.getTileAt(x, y);
+                    if (tile) {
+                        grid.setTerrainAt(tile.row, tile.col, !tile.tileRef);
+                    }
+                }
+            });
 
             setupMarker(app, grid, 'tile-info');
             setupDragging(app, grid);
@@ -36,7 +54,8 @@
         <ul>
             <li><a href="https://www.youtube.com/watch?v=jEWFSv3ivTg">Watch this explanation</a> of dual-grid rendering</li>
             <li>Click and drag the map around</li>
-            <li>Shift click to highlight a tile</li>
+            <li>Shift-click to highlight a tile</li>
+            <li>Control-click to toggle the value of the terrain (grass vs dirt)</li>
         </ul>
         <p>Average FPS: <span id="fps"></span></p>
         <p>Selected tile: <span id="tile-info"></span></p>
