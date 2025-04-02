@@ -123,6 +123,11 @@ export class DualGrid extends BaseGrid {
         this.grid.setTiles(this.makeTiles());
     }
 
+    setTerrainAt(row: number, col: number, value: boolean) {
+        this.terrain[row][col] = value;
+        this.grid.setTiles(this.makeTiles());
+    }
+
     private makeTiles() {
         const rows = this.terrain.length;
         const cols = this.terrain[0].length;
