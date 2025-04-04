@@ -1,4 +1,4 @@
-# pixijs-grid
+# pixijs-easygrid
 
 A "good enough" grid sprite for PixiJS.
 

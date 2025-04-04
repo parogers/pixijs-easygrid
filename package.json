@@ -1,5 +1,5 @@
 {
-    "name": "@parogers/pixijs-grid",
+    "name": "@parogers/pixijs-easygrid",
     "version": "0.0.1",
     "description": "A \"good enough\" grid sprite for PixiJS",
     "main": "dist/index.js",
