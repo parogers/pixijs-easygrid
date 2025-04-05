@@ -1,5 +1,5 @@
 
 node_modules/
 dist/
-examples/pixijs-grid.js.map
-examples/pixijs-grid.js
+examples/pixijs-easygrid.js.map
+examples/pixijs-easygrid.js

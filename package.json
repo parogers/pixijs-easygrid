@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc",
         "serve": "browser-sync start --server . --files examples --no-notify --startPath examples",
-        "watch-web": "esbuild src/index.ts --bundle --outfile=examples/pixijs-grid.js --global-name=easygrid --sourcemap --external:pixi.js --watch",
+        "watch-web": "esbuild src/index.ts --bundle --outfile=examples/pixijs-easygrid.js --global-name=easygrid --sourcemap --external:pixi.js --watch",
         "lint" : "tsc --project ./tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
