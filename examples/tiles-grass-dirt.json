@@ -1,5 +1,5 @@
 {"frames": { 
-"grass-00":
+"grass-dirt-00":
 {
   "rotated": false,
   "trimmed": false,
@@ -24,7 +24,7 @@
     "y": 0.5
   }
 },
-"grass-01":
+"grass-dirt-01":
 {
   "rotated": false,
   "trimmed": false,
@@ -49,7 +49,7 @@
     "y": 0.5
   }
 },
-"grass-02":
+"grass-dirt-02":
 {
   "rotated": false,
   "trimmed": false,
@@ -74,7 +74,7 @@
     "y": 0.5
   }
 },
-"grass-03":
+"grass-dirt-03":
 {
   "rotated": false,
   "trimmed": false,
@@ -99,7 +99,7 @@
     "y": 0.5
   }
 },
-"grass-04":
+"grass-dirt-04":
 {
   "rotated": false,
   "trimmed": false,
@@ -124,7 +124,7 @@
     "y": 0.5
   }
 },
-"grass-05":
+"grass-dirt-05":
 {
   "rotated": false,
   "trimmed": false,
@@ -149,7 +149,7 @@
     "y": 0.5
   }
 },
-"grass-06":
+"grass-dirt-06":
 {
   "rotated": false,
   "trimmed": false,
@@ -174,7 +174,7 @@
     "y": 0.5
   }
 },
-"grass-07":
+"grass-dirt-07":
 {
   "rotated": false,
   "trimmed": false,
@@ -199,7 +199,7 @@
     "y": 0.5
   }
 },
-"grass-08":
+"grass-dirt-08":
 {
   "rotated": false,
   "trimmed": false,
@@ -224,7 +224,7 @@
     "y": 0.5
   }
 },
-"grass-09":
+"grass-dirt-09":
 {
   "rotated": false,
   "trimmed": false,
@@ -249,7 +249,7 @@
     "y": 0.5
   }
 },
-"grass-10":
+"grass-dirt-10":
 {
   "rotated": false,
   "trimmed": false,
@@ -274,7 +274,7 @@
     "y": 0.5
   }
 },
-"grass-11":
+"grass-dirt-11":
 {
   "rotated": false,
   "trimmed": false,
@@ -299,7 +299,7 @@
     "y": 0.5
   }
 },
-"grass-12":
+"grass-dirt-12":
 {
   "rotated": false,
   "trimmed": false,
@@ -324,7 +324,7 @@
     "y": 0.5
   }
 },
-"grass-13":
+"grass-dirt-13":
 {
   "rotated": false,
   "trimmed": false,
@@ -349,7 +349,7 @@
     "y": 0.5
   }
 },
-"grass-14":
+"grass-dirt-14":
 {
   "rotated": false,
   "trimmed": false,
@@ -374,7 +374,7 @@
     "y": 0.5
   }
 },
-"grass-15":
+"grass-dirt-15":
 {
   "rotated": false,
   "trimmed": false,
@@ -403,7 +403,7 @@
 "meta": {
   "app": "https://github.com/houmain/spright",
   "format": "RGBA8888",
-  "image": "tiles-grass.png",
+  "image": "tiles-grass-dirt.png",
   "size": { "w": 85, "h": 85 },
   "scale": 1.0
 }

@@ -14,7 +14,7 @@
             app.renderer.background.color = 0xa0a0a0;
             document.body.appendChild(app.canvas);
 
-            const spritesheet = await PIXI.Assets.load('tiles-grass.json');
+            const spritesheet = await PIXI.Assets.load('tiles-grass-dirt.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
             const terrain = generateTerrain(100, 100);
