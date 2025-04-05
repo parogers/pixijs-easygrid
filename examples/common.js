@@ -67,9 +67,13 @@ function setupMarker(app, grid, elementID) {
 
     app.renderer.canvas.addEventListener('click', (event) => {
         if (event.shiftKey) {
-            const mapX = event.offsetX/app.stage.scale.x - grid.x;
-            const mapY = event.offsetY/app.stage.scale.y - grid.y;
-            const tile = grid.getTileAt(mapX, mapY);
+            const pos = mouseToViewportPos(
+                app,
+                grid,
+                event.offsetX,
+                event.offsetY
+            );
+            const tile = grid.getTileAt(pos.x, pos.y);
             if (tile) {
                 marker.alpha = 1;
                 marker.x = tile.x;
@@ -112,7 +116,8 @@ function generateTerrain(rows, cols) {
 
 
 function mouseToViewportPos(app, grid, x, y) {
-    const viewX = x/app.stage.scale.x - grid.x;
-    const viewY = y/app.stage.scale.y - grid.y;
+    // Note sprite scaling happens after sprite positioning
+    const viewX = (x - app.stage.x) / app.stage.scale.x - grid.x;
+    const viewY = (y - app.stage.y) / app.stage.scale.y - grid.y;
     return { x: viewX, y: viewY };
 }
