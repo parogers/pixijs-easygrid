@@ -5,8 +5,9 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "serve": "browser-sync start --server . --files examples --no-notify --startPath examples",
-        "watch-web": "esbuild src/index.ts --bundle --outfile=examples/pixijs-easygrid.js --global-name=easygrid --sourcemap --external:pixi.js --watch",
+        "serve-examples": "./scripts/serve_examples.sh",
+        "watch-web": "./scripts/watch_web.sh",
+        "watch-sample-tiles" : "./scripts/watch_sample_tiles.sh",
         "lint" : "tsc --project ./tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
