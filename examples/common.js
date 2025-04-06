@@ -102,13 +102,19 @@ function makeBox(width, height) {
  * random binary values based on a perlin noise filter that looks terrain-like.
  */
 function generateTerrain(rows, cols) {
-    const noise = new Noise();
+    const matrix = generateTerrainFloat(rows, cols);
+    return matrix.map(row => row.map(value => value > 0));
+}
+
+
+function generateTerrainFloat(rows, cols) {
+    const noise = new Noise(); //Date.now());
     const terrain = [];
     for (let row = 0; row < rows; row++) {
         terrain.push([]);
         for (let col = 0; col < cols; col++) {
-            const value = noise.simplex2(col/10, row/10);
-            terrain[row].push(value > 0);
+            const value = noise.simplex2(col/25, row/25);
+            terrain[row].push(value);
         }
     }
     return terrain;

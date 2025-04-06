@@ -1,0 +1,410 @@
+{"frames": { 
+"mountain-00":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-01":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-02":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-03":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 0,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 3,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-04":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-05":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-06":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-07":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 16,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 24,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-08":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-09":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-10":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-11":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 32,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 45,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-12":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 0,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 3,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-13":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 16,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 24,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-14":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 32,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 45,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+},
+"mountain-15":
+{
+  "rotated": false,
+  "trimmed": false,
+  "sourceSize": {
+    "w": 16,
+    "h": 16
+  },
+  "spriteSourceSize": {
+    "x": 48,
+    "y": 48,
+    "w": 16,
+    "h": 16
+  },
+  "frame": {
+    "x": 66,
+    "y": 66,
+    "w": 16,
+    "h": 16
+  },
+  "anchor": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
+},
+"meta": {
+  "app": "https://github.com/houmain/spright",
+  "format": "RGBA8888",
+  "image": "tiles-mountain.png",
+  "size": { "w": 85, "h": 85 },
+  "scale": 1.0
+}
+}

@@ -1,0 +1,113 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="https://pixijs.download/dev/pixi.js"></script>
+        <script src="require.js"></script>
+        <script src="noisejs.js"></script>
+        <script src="common.js"></script>
+        <script src="pixijs-easygrid.js"></script>
+        <script type="module">
+            const div = document.getElementById('app');
+            const app = new PIXI.Application();
+            await app.init({
+                resizeTo: window,
+            });
+            div.appendChild(app.canvas);
+
+            const terrain = generateTerrainFloat(100, 100);
+            const dirt = terrain.map(row => row.map(value => value > -0.5));
+            const grass = terrain.map(row => row.map(value => value > -0.3 && value < 0.5));
+            const mountain = terrain.map(row => row.map(value => value > 0.5));
+
+            const spritesheet2 = await PIXI.Assets.load('tiles-dirt.json');
+            spritesheet2.textureSource.scaleMode = 'nearest';
+
+            const grid2 = new easygrid.DualGrid({
+                tileRef: 'dirt',
+                spritesheet: spritesheet2,
+                terrain: dirt,
+            });
+            grid2.viewport.x = 150;
+            grid2.viewport.y = 180;
+            grid2.viewport.width = 200;
+            grid2.viewport.height = 200;
+            app.stage.addChild(grid2);
+
+            const spritesheet = await PIXI.Assets.load('tiles-grass.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            const grid = new easygrid.DualGrid({
+                tileRef: 'grass',
+                spritesheet: spritesheet,
+                terrain: grass,
+            });
+            grid.viewport.x = 150;
+            grid.viewport.y = 180;
+            grid.viewport.width = grid2.viewport.width;
+            grid.viewport.height = grid2.viewport.height;
+            app.stage.addChild(grid);
+
+            const spritesheet3 = await PIXI.Assets.load('tiles-mountain.json');
+            spritesheet3.textureSource.scaleMode = 'nearest';
+
+            const grid3 = new easygrid.DualGrid({
+                tileRef: 'mountain',
+                spritesheet: spritesheet3,
+                terrain: mountain,
+            });
+            grid3.viewport.x = 150;
+            grid3.viewport.y = 180;
+            grid3.viewport.width = grid2.viewport.width;
+            grid3.viewport.height = grid2.viewport.height;
+            app.stage.addChild(grid3);
+
+            setupDragging(app, grid);
+            setupDragging(app, grid2);
+            setupDragging(app, grid3);
+            setupMarker(app, grid);
+
+            // Dynamically resize the game world to fit available space
+            app.renderer.on('resize', () => {
+                easygrid.scaleToViewport(
+                    app,
+                    {
+                        width: grid.viewport.width,
+                        height: grid.viewport.height,
+                    },
+                );
+            });
+            app.renderer.emit('resize');
+
+        </script>
+        <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        dialog {
+            outline: none;
+            border: none;
+            top: 1em;
+            border-radius: 1em;
+            max-width: 40ch;
+        }
+
+        h1 {
+            font-size: 1.1rem;
+        }
+        </style>
+    </head>
+    <body>
+        <dialog open>
+            <h1>Example: stacked grid</h1>
+            <p>This example shows off multiple dual-grids stacked together</p>
+            <form method="dialog">
+                <button>Dismiss</button>
+            </form>
+        </dialog>
+
+        <div id="app">
+        </div>
+    </body>
+</html>
