@@ -5,7 +5,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid, GridTile, TileRef, Size } from './base-grid';
+import { BaseGrid, GridTile, Size } from './base-grid';
 
 import { Grid } from './grid';
 
@@ -13,7 +13,7 @@ import { Grid } from './grid';
 export type DualGridParams = {
     tileRef: string;
     altTileRef?: string;
-    tiles?: TileRef[],
+    tiles?: string[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
     terrain?: boolean[][],
@@ -80,7 +80,7 @@ function makeEmpty(rows: number, cols: number) {
  */
 export class DualGrid extends BaseGrid {
     terrain: boolean[][] = [];
-    tileMapping: { [key: string] : TileRef }
+    tileMapping: { [key: string] : string }
     // 'true' values in the terrain map to this identifying value
     tileRef: string = '';
     // Used for 'false' values in the terrain
@@ -142,7 +142,7 @@ export class DualGrid extends BaseGrid {
             return +(row >= 0 && row < rows && this.terrain[row][col]);
         }
 
-        const getTileAt = (row: number, col: number): TileRef => {
+        const getTileAt = (row: number, col: number): string => {
             const nw = checkTile(row, col);
             const ne = checkTile(row, col+1);
             const sw = checkTile(row+1, col);
@@ -160,7 +160,7 @@ export class DualGrid extends BaseGrid {
         return tiles;
     }
 
-    getTileRefAt(row: number, col: number): TileRef|null {
+    getTileRefAt(row: number, col: number): string|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }

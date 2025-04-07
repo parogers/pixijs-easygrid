@@ -18,12 +18,10 @@ export type GridRange = {
     readonly colEnd: number;
 }
 
-export type FindTextureFunc = (name: string|number) => PIXI.Texture|null;
-
-export type TileRef = number|string;
+export type FindTextureFunc = (name: string) => PIXI.Texture|null;
 
 export type GridTile = {
-    tileRef: TileRef;
+    tileRef: string;
     row: number;
     col: number
     x: number;
@@ -140,7 +138,7 @@ export class BaseGrid extends PIXI.Container {
         }
     }
 
-    getTileRefAt(row: number, col: number): TileRef|null {
+    getTileRefAt(row: number, col: number): string|null {
         return null;
     }
 

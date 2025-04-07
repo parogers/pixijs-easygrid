@@ -1,7 +1,7 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid, Size, TileRef } from './base-grid';
+import { BaseGrid, Size } from './base-grid';
 
 import { DualGrid } from './dual-grid';
 
@@ -38,7 +38,7 @@ export class StackedGrid extends BaseGrid {
         }
     }
 
-    getTileRefAt(row: number, col: number): TileRef|null {
+    getTileRefAt(row: number, col: number): string|null {
         for (let n = this.layers.length-1; n >= 0; n--) {
             const tileRef = this.layers[n].getTileRefAt(row, col);
             if (tileRef) {

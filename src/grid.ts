@@ -4,13 +4,10 @@ import * as PIXI from 'pixi.js';
 import {
     BaseGrid,
     Size,
-    TileRef,
     FindTextureFunc,
     GridTile,
     GridRange,
 } from './base-grid';
-
-export { TileRef }
 
 type GridParams = {
     /* The spritesheet to draw from when rendering tiles. If not specified, the
@@ -68,7 +65,7 @@ function getTileSize(params: GridParams) {
 
 
 export class Grid extends BaseGrid {
-    private tiles: TileRef[][] = [];
+    private tiles: string[][] = [];
     private _tileSize: Size;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();
     private renderedGridRange: GridRange | null = null;
@@ -93,14 +90,14 @@ export class Grid extends BaseGrid {
         if (params.findTexture) {
             this.findTexture = params.findTexture;
         } else if (this.spritesheet) {
-            this.findTexture = (tile: TileRef) => {
+            this.findTexture = (tile: string) => {
                 if (!this.spritesheet) {
                     return null;
                 }
                 return this.spritesheet.textures[tile];
             }
         } else {
-            this.findTexture = (tile: TileRef) => {
+            this.findTexture = (tile: string) => {
                 return PIXI.Assets.cache.get(tile);
             }
         }
@@ -124,12 +121,12 @@ export class Grid extends BaseGrid {
         return this.tiles[0].length;
     }
 
-    setTiles(tiles: TileRef[][]) {
+    setTiles(tiles: string[][]) {
         this.tiles = tiles;
         this.tilesDirty = true;
     }
 
-    setTilesFromStrip(tiles: TileRef[], rows: number, cols: number) {
+    setTilesFromStrip(tiles: string[], rows: number, cols: number) {
         if (rows*cols !== tiles.length) {
             throw Error(`rows*cols should equal number of tiles in strip (${rows}x${cols} != ${tiles.length})`);
         }
@@ -144,7 +141,7 @@ export class Grid extends BaseGrid {
         this.tilesDirty = true;
     }
 
-    setTile(row: number, col: number, tile: TileRef) {
+    setTile(row: number, col: number, tile: string) {
         // TODO - bounds check
         this.tiles[row][col] = tile;
         this.tilesDirty = true;
@@ -241,7 +238,7 @@ export class Grid extends BaseGrid {
         }
     }
 
-    getTileRefAt(row: number, col: number): TileRef|null {
+    getTileRefAt(row: number, col: number): string|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
