@@ -75,6 +75,7 @@ function setupMarker(app, grid, elementID) {
             );
             const tile = grid.getTileAt(pos.x, pos.y);
             if (tile) {
+                console.log('tile', tile);
                 marker.alpha = 1;
                 marker.x = tile.x;
                 marker.y = tile.y;

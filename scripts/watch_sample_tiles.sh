@@ -5,7 +5,8 @@ if ! cd ./examples/originals; then
     exit 1
 fi
 
-while inotifywait -r .
+while inotifywait -r -e close_write .
 do
+    sleep 0.5
     make
 done

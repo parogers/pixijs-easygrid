@@ -15,64 +15,61 @@
             div.appendChild(app.canvas);
 
             const terrain = generateTerrainFloat(100, 100);
-            const dirt = terrain.map(row => row.map(value => value > -0.5));
-            const grass = terrain.map(row => row.map(value => value > -0.3 && value < 0.5));
-            const mountain = terrain.map(row => row.map(value => value > 0.5));
+            const dirtTerrain = terrain.map(row => row.map(value => value > -0.5));
+            const grassTerrain = terrain.map(row => row.map(value => value > -0.3 && value < 0.5));
+            const mountainTerrain = terrain.map(row => row.map(value => value > 0.5));
+            const treesTerrain = terrain.map(row => row.map(value => value > 0 && value < 0.3));
 
-            const spritesheet2 = await PIXI.Assets.load('tiles-dirt.json');
-            spritesheet2.textureSource.scaleMode = 'nearest';
+            const grassSheet = await PIXI.Assets.load('tiles-grass.json');
+            const dirtSheet = await PIXI.Assets.load('tiles-dirt.json');
+            const mountainSheet = await PIXI.Assets.load('tiles-mountain.json');
+            const treeSheet = await PIXI.Assets.load('tiles-trees.json');
+            grassSheet.textureSource.scaleMode = 'nearest';
+            dirtSheet.textureSource.scaleMode = 'nearest';
+            mountainSheet.textureSource.scaleMode = 'nearest';
+            treeSheet.textureSource.scaleMode = 'nearest';
 
-            const grid2 = new easygrid.DualGrid({
-                tileRef: 'dirt',
-                spritesheet: spritesheet2,
-                terrain: dirt,
+            const stacked = new easygrid.StackedGrid({
+                layers: [
+                    {
+                        tileRef: 'dirt',
+                        altTileRef: 'water',
+                        spritesheet: dirtSheet,
+                        terrain: dirtTerrain,
+                    },
+                    {
+                        tileRef: 'grass',
+                        spritesheet: grassSheet,
+                        terrain: grassTerrain,
+                    },
+                    {
+                        tileRef: 'mountain',
+                        spritesheet: mountainSheet,
+                        terrain: mountainTerrain,
+                    },
+                    {
+                        tileRef: 'tree',
+                        spritesheet: treeSheet,
+                        terrain: treesTerrain,
+                    },
+                ],
             });
-            grid2.viewport.x = 150;
-            grid2.viewport.y = 180;
-            grid2.viewport.width = 200;
-            grid2.viewport.height = 200;
-            app.stage.addChild(grid2);
+            stacked.viewport.x = 150;
+            stacked.viewport.y = 180;
+            stacked.viewport.width = 200;
+            stacked.viewport.height = 200;
+            app.stage.addChild(stacked);
 
-            const spritesheet = await PIXI.Assets.load('tiles-grass.json');
-            spritesheet.textureSource.scaleMode = 'nearest';
+            setupDragging(app, stacked);
+            setupMarker(app, stacked);
 
-            const grid = new easygrid.DualGrid({
-                tileRef: 'grass',
-                spritesheet: spritesheet,
-                terrain: grass,
-            });
-            grid.viewport.x = 150;
-            grid.viewport.y = 180;
-            grid.viewport.width = grid2.viewport.width;
-            grid.viewport.height = grid2.viewport.height;
-            app.stage.addChild(grid);
-
-            const spritesheet3 = await PIXI.Assets.load('tiles-mountain.json');
-            spritesheet3.textureSource.scaleMode = 'nearest';
-
-            const grid3 = new easygrid.DualGrid({
-                tileRef: 'mountain',
-                spritesheet: spritesheet3,
-                terrain: mountain,
-            });
-            grid3.viewport.x = 150;
-            grid3.viewport.y = 180;
-            grid3.viewport.width = grid2.viewport.width;
-            grid3.viewport.height = grid2.viewport.height;
-            app.stage.addChild(grid3);
-
-            setupDragging(app, grid);
-            setupDragging(app, grid2);
-            setupDragging(app, grid3);
-            setupMarker(app, grid);
-
-            // Dynamically resize the game world to fit available space
+            // Dynamically resize the camera view to fit available space
             app.renderer.on('resize', () => {
                 easygrid.scaleToViewport(
                     app,
                     {
-                        width: grid.viewport.width,
-                        height: grid.viewport.height,
+                        width: stacked.viewport.width,
+                        height: stacked.viewport.height,
                     },
                 );
             });

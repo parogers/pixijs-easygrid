@@ -6,7 +6,8 @@ all: \
 	../tiles-grass-dirt.json \
 	../tiles-grass.json \
 	../tiles-dirt.json \
-	../tiles-mountain.json
+	../tiles-mountain.json \
+	../tiles-trees.json
 
 ../tiles.json: ./tiles/tiles.conf ./tiles/TilesDemo.png
 	cd tiles && \
@@ -32,3 +33,8 @@ all: \
 	cd tiles && \
 		${SPRIGHT_CMD} -i tiles-mountain.conf -o tiles-mountain.json && \
 		mv tiles-mountain.png tiles-mountain.json ../../
+
+../tiles-trees.json: ./tiles/tiles-trees.conf ./tiles/trees-source.png
+	cd tiles && \
+		${SPRIGHT_CMD} -i tiles-trees.conf -o tiles-trees.json && \
+		mv tiles-trees.png tiles-trees.json ../../

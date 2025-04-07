@@ -12,6 +12,7 @@ import { Grid } from './grid';
 
 export type DualGridParams = {
     tileRef: string;
+    altTileRef?: string;
     tiles?: TileRef[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
@@ -80,7 +81,10 @@ function makeEmpty(rows: number, cols: number) {
 export class DualGrid extends BaseGrid {
     terrain: boolean[][] = [];
     tileMapping: { [key: string] : TileRef }
+    // 'true' values in the terrain map to this identifying value
     tileRef: string = '';
+    // Used for 'false' values in the terrain
+    altTileRef: string = '';
     grid: Grid;
 
     constructor(params: DualGridParams) {
@@ -91,6 +95,8 @@ export class DualGrid extends BaseGrid {
         })
         this.autoUpdate = params.autoUpdate ?? true;
         this.tileRef = params.tileRef;
+        this.altTileRef = params.altTileRef ?? '';
+
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
             throw Error(`tiles array length must be exactly ${TILE_ORDER.length}`);
@@ -158,7 +164,7 @@ export class DualGrid extends BaseGrid {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
-        const tileRef = this.terrain[row][col] ? this.tileRef : '';
+        const tileRef = this.terrain[row][col] ? this.tileRef : this.altTileRef;
         return tileRef;
     }
 
