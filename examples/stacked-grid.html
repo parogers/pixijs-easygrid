@@ -14,11 +14,25 @@
             });
             div.appendChild(app.canvas);
 
-            const terrain = generateTerrainFloat(100, 100);
+            const rows = 100;
+            const cols = 100;
+            const terrain = generateTerrainFloat(rows, cols);
             const dirtTerrain = terrain.map(row => row.map(value => value > -0.5));
             const grassTerrain = terrain.map(row => row.map(value => value > -0.3 && value < 0.5));
             const mountainTerrain = terrain.map(row => row.map(value => value > 0.5));
             const treesTerrain = terrain.map(row => row.map(value => value > 0 && value < 0.3));
+            // Add some terrain variation
+            for (let n = 0; n < 100; n++) {
+                let row = randInt(0, rows-1);
+                let col = randInt(0, cols-1);
+                for (let i = 0; i < 5; i++) {
+                    grassTerrain[row][col] = false;
+                    mountainTerrain[row][col] = false;
+                    row += randInt(-1, 1);
+                    col += randInt(-1, 1);
+                    if (row < 0 || row >= rows || col < 0 || col >= cols) break;
+                }
+            }
 
             const grassSheet = await PIXI.Assets.load('tiles-grass.json');
             const dirtSheet = await PIXI.Assets.load('tiles-dirt.json');

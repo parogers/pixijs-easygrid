@@ -128,3 +128,8 @@ function mouseToViewportPos(app, grid, x, y) {
     const viewY = (y - app.stage.y) / app.stage.scale.y - grid.y;
     return { x: viewX, y: viewY };
 }
+
+
+function randInt(a, b) {
+    return a + Math.floor(Math.random() * (b - a + 1));
+}
