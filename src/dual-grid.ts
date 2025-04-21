@@ -104,8 +104,6 @@ export class DualGrid extends BaseGrid {
         this.tileMapping = Object.fromEntries(
             TILE_ORDER.map((key, index) => [key, tiles[index]])
         );
-        this.grid.x = this.tileSize.width/2;
-        this.grid.y = this.tileSize.height/2;
         this.gridContainer.addChild(this.grid);
         if (params.terrain) {
             this.setTerrain(params.terrain);
@@ -172,8 +170,10 @@ export class DualGrid extends BaseGrid {
         super.update();
         this.foreground.x = -this.viewport.x;
         this.foreground.y = -this.viewport.y;
-        this.grid.viewport.x = this.viewport.x;
-        this.grid.viewport.y = this.viewport.y;
+        this.grid.viewport.x = this.viewport.x - this.tileSize.width/2;
+        this.grid.viewport.y = this.viewport.y - this.tileSize.height/2;
+        this.grid.viewport.width = this.viewport.width;
+        this.grid.viewport.height = this.viewport.height;
         this.grid.update();
     }
 }

@@ -67,6 +67,8 @@ export class StackedGrid extends BaseGrid {
         for (let layer of this.layers) {
             layer.viewport.x = this.viewport.x;
             layer.viewport.y = this.viewport.y;
+            layer.viewport.width = this.viewport.width;
+            layer.viewport.height = this.viewport.height;
             layer.update();
         }
     }
