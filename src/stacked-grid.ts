@@ -8,6 +8,7 @@ import { DualGrid } from './dual-grid';
 
 export type StackedGridParams = {
     layers: StackedLayerParams[];
+    autoUpdate?: boolean;
 }
 
 
@@ -16,7 +17,6 @@ export type StackedLayerParams = {
     altTileRef?: string;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
-    autoUpdate?: boolean;
 }
 
 
