@@ -16,6 +16,7 @@ export type StackedLayerParams = {
     altTileRef?: string;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
+    autoUpdate?: boolean;
 }
 
 
@@ -23,8 +24,9 @@ export class StackedGrid extends BaseGrid {
     layers: DualGrid[] = []
 
     constructor(params: StackedGridParams) {
-        super();
-        this.autoUpdate = true;
+        super({
+            autoUpdate: params.autoUpdate,
+        });
         for (let layer of params.layers) {
             const grid = new DualGrid({
                 tileRef: layer.tileRef,

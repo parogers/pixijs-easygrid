@@ -88,12 +88,13 @@ export class DualGrid extends BaseGrid {
     grid: Grid;
 
     constructor(params: DualGridParams) {
-        super();
+        super({
+            autoUpdate: params.autoUpdate,
+        });
         this.grid = new Grid({
             spritesheet: params.spritesheet,
             autoUpdate: false,
         })
-        this.autoUpdate = params.autoUpdate ?? true;
         this.tileRef = params.tileRef;
         this.altTileRef = params.altTileRef ?? '';
 

@@ -78,12 +78,12 @@ export class Grid extends BaseGrid {
     constructor(params: GridParams) {
         super({
             viewportMask: params.viewportMask,
+            autoUpdate: params.autoUpdate,
         });
         this.tilesDirty = true;
         this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
         this.gridContainer.addChild(this.graphics);
-        this.autoUpdate = params.autoUpdate ?? true;
         this._tileSize = getTileSize(params);
         this.fixedViewport = params.fixedViewport ?? true;
 

@@ -4,6 +4,7 @@ import * as PIXI from 'pixi.js';
 
 export type BaseGridParams = {
     viewportMask?: boolean;
+    autoUpdate?: boolean;
 }
 
 export type Size = {
@@ -59,6 +60,7 @@ export class BaseGrid extends PIXI.Container {
 
     constructor(params: BaseGridParams = {}) {
         super();
+        this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
         this.viewContainer.addChild(this.gridContainer);
         this.viewContainer.addChild(this.foreground);
