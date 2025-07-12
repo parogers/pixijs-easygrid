@@ -9,7 +9,7 @@ function setupDragging(app, grid) {
     });
 
     app.renderer.canvas.addEventListener('mousedown', (event) => {
-        if (!event.shiftKey) {
+        if (!event.shiftKey && !event.ctrlKey) {
             const pos = mouseToViewportPos(
                 app,
                 grid,

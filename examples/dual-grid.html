@@ -28,20 +28,46 @@
             app.stage.addChild(grid);
             app.stage.scale.set(1.5);
 
-            // Let the user click around the map and change the terrain
-            app.renderer.canvas.addEventListener('click', (event) => {
-                if (event.ctrlKey) {
-                    const { x, y } = mouseToViewportPos(
-                        app,
-                        grid,
-                        event.offsetX,
-                        event.offsetY
-                    );
-                    const tile = grid.getTileAt(x, y);
-                    if (tile) {
-                        grid.setTerrainAt(tile.row, tile.col, !tile.tileRef);
-                    }
+            /* Let the user click around the map and change the terrain. When
+             * they click it toggles the terrain type under the mouse, then if
+             * they continue dragging around it continues to set the same
+             * terrain type to other cells. */ 
+            let updatingTerrain = false;
+            let updatingTileRef = true;
+            app.renderer.canvas.addEventListener('mousedown', event => {
+                if (!event.ctrlKey) {
+                    return;
                 }
+                const { x, y } = mouseToViewportPos(
+                    app,
+                    grid,
+                    event.offsetX,
+                    event.offsetY
+                );
+                const tile = grid.getTileAt(x, y);
+                if (tile) {
+                    updatingTileRef = !tile.tileRef;
+                    grid.setTerrainAt(tile.row, tile.col, updatingTileRef);
+                    updatingTerrain = true;
+                }
+            });
+            app.renderer.canvas.addEventListener('mousemove', event => {
+                if (!updatingTerrain) {
+                    return;
+                }
+                const { x, y } = mouseToViewportPos(
+                    app,
+                    grid,
+                    event.offsetX,
+                    event.offsetY
+                );
+                const tile = grid.getTileAt(x, y);
+                if (tile) {
+                    grid.setTerrainAt(tile.row, tile.col, updatingTileRef);
+                }
+            });
+            app.renderer.canvas.addEventListener('mouseup', (event) => {
+                updatingTerrain = false;
             });
 
             setupMarker(app, grid, 'tile-info');
