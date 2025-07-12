@@ -79,9 +79,16 @@ function setupMarker(app, grid, elementID) {
                 marker.alpha = 1;
                 marker.x = tile.x;
                 marker.y = tile.y;
+
                 const div = document.getElementById(elementID);
                 if (div) {
-                    div.innerText = `${tile.tileRef || 'NA'} (${tile.row}, ${tile.col})`;
+                    div.innerText = `Tile: ${tile.tileRef || 'NA'} (${tile.row}, ${tile.col})`;
+
+                    if (grid.getStackRefAt) {
+                        const stack = grid.getStackRefAt(tile.row, tile.col);
+                        div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
+                        console.log(stack);
+                    }
                 }
             }
         }

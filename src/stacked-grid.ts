@@ -9,12 +9,12 @@ import { DualGrid } from './dual-grid';
 export type StackedGridParams = {
     layers: StackedLayerParams[];
     autoUpdate?: boolean;
+    bottomTileRef?: string;
 }
 
 
 export type StackedLayerParams = {
     tileRef: string;
-    altTileRef?: string;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
 }
@@ -22,15 +22,17 @@ export type StackedLayerParams = {
 
 export class StackedGrid extends BaseGrid {
     layers: DualGrid[] = []
+    bottomTileRef: string = '';
 
     constructor(params: StackedGridParams) {
         super({
             autoUpdate: params.autoUpdate,
         });
+        this.bottomTileRef = params.bottomTileRef ?? '';
         for (let layer of params.layers) {
             const grid = new DualGrid({
                 tileRef: layer.tileRef,
-                altTileRef: layer.altTileRef,
+                altTileRef: '',
                 spritesheet: layer.spritesheet,
                 terrain: layer.terrain,
                 autoUpdate: false,
@@ -48,6 +50,20 @@ export class StackedGrid extends BaseGrid {
             }
         }
         return '';
+    }
+
+    /*
+     * Returns a list of TileRef objects representing each layer of the dual
+     * grid in the same order as StackedGridParams.layers (note the bottom
+     * most constant layer, bottomTileRef, is not included in this list)
+     */
+    getStackRefAt(row: number, col: number): string[] {
+        const stack = [];
+        for (let n = 0; n < this.layers.length; n++) {
+            const tileRef = this.layers[n].getTileRefAt(row, col);
+            stack.push(tileRef ?? '');
+        }
+        return stack;
     }
 
     get rows(): number {

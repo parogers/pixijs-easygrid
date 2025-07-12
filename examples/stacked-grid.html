@@ -44,10 +44,10 @@
             treeSheet.textureSource.scaleMode = 'nearest';
 
             const stacked = new easygrid.StackedGrid({
+                bottomTileRef: 'water',
                 layers: [
                     {
                         tileRef: 'dirt',
-                        altTileRef: 'water',
                         spritesheet: dirtSheet,
                         terrain: dirtTerrain,
                     },
@@ -75,7 +75,7 @@
             app.stage.addChild(stacked);
 
             setupDragging(app, stacked);
-            setupMarker(app, stacked);
+            setupMarker(app, stacked, 'tile-info');
 
             // Dynamically resize the camera view to fit available space
             app.renderer.on('resize', () => {
@@ -107,6 +107,13 @@
         h1 {
             font-size: 1.1rem;
         }
+
+        #tile-info {
+            top: 1em;
+            left: 1em;
+            position: absolute;
+            color: white;
+        }
         </style>
     </head>
     <body>
@@ -120,5 +127,7 @@
 
         <div id="app">
         </div>
+
+        <div id="tile-info"></div>
     </body>
 </html>
