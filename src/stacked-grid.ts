@@ -6,33 +6,32 @@ import { BaseGrid, Size } from './base-grid';
 import { DualGrid } from './dual-grid';
 
 
-export type StackedGridParams = {
-    layers: StackedLayerParams[];
+export type StackedGridParams<T> = {
+    layers: StackedLayerParams<T>[];
     autoUpdate?: boolean;
-    bottomTileRef?: string;
+    bottomTileRef?: T;
 }
 
 
-export type StackedLayerParams = {
-    tileRef: string;
+export type StackedLayerParams<T> = {
+    tileRef: T;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
 }
 
 
-export class StackedGrid extends BaseGrid {
-    layers: DualGrid[] = []
-    bottomTileRef: string = '';
+export class StackedGrid<T> extends BaseGrid<T> {
+    layers: DualGrid<T>[] = []
+    bottomTileRef: T|null = null;
 
-    constructor(params: StackedGridParams) {
+    constructor(params: StackedGridParams<T>) {
         super({
             autoUpdate: params.autoUpdate,
         });
-        this.bottomTileRef = params.bottomTileRef ?? '';
+        this.bottomTileRef = params.bottomTileRef ?? null;
         for (let layer of params.layers) {
-            const grid = new DualGrid({
+            const grid = new DualGrid<T>({
                 tileRef: layer.tileRef,
-                altTileRef: '',
                 spritesheet: layer.spritesheet,
                 terrain: layer.terrain,
                 autoUpdate: false,
@@ -42,14 +41,14 @@ export class StackedGrid extends BaseGrid {
         }
     }
 
-    getTileRefAt(row: number, col: number): string|null {
+    getTileRefAt(row: number, col: number): T|null {
         for (let n = this.layers.length-1; n >= 0; n--) {
             const tileRef = this.layers[n].getTileRefAt(row, col);
             if (tileRef) {
                 return tileRef;
             }
         }
-        return '';
+        return null;
     }
 
     /*
@@ -57,11 +56,11 @@ export class StackedGrid extends BaseGrid {
      * grid in the same order as StackedGridParams.layers (note the bottom
      * most constant layer, bottomTileRef, is not included in this list)
      */
-    getStackRefAt(row: number, col: number): string[] {
+    getStackRefAt(row: number, col: number): (T|null)[] {
         const stack = [];
         for (let n = 0; n < this.layers.length; n++) {
             const tileRef = this.layers[n].getTileRefAt(row, col);
-            stack.push(tileRef ?? '');
+            stack.push(tileRef ?? null);
         }
         return stack;
     }

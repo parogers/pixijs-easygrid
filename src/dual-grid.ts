@@ -5,14 +5,14 @@
 
 import * as PIXI from 'pixi.js';
 
-import { BaseGrid, GridTile, Size } from './base-grid';
+import { BaseGrid, Size } from './base-grid';
 
 import { Grid } from './grid';
 
 
-export type DualGridParams = {
-    tileRef: string;
-    altTileRef?: string;
+export type DualGridParams<T> = {
+    tileRef: T;
+    altTileRef?: T;
     tiles?: string[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
@@ -78,16 +78,16 @@ function makeEmpty(rows: number, cols: number) {
  * should name the tiles so that, when sorted alphabetically, they match the
  * order in the above template. (when reading across the first row, second, etc)
  */
-export class DualGrid extends BaseGrid {
+export class DualGrid<T> extends BaseGrid<T> {
     terrain: boolean[][] = [];
     tileMapping: { [key: string] : string }
     // 'true' values in the terrain map to this identifying value
-    tileRef: string = '';
+    tileRef: T|null;
     // Used for 'false' values in the terrain
-    altTileRef: string = '';
+    altTileRef: T|null;
     grid: Grid;
 
-    constructor(params: DualGridParams) {
+    constructor(params: DualGridParams<T>) {
         super({
             autoUpdate: params.autoUpdate,
         });
@@ -96,7 +96,7 @@ export class DualGrid extends BaseGrid {
             autoUpdate: false,
         })
         this.tileRef = params.tileRef;
-        this.altTileRef = params.altTileRef ?? '';
+        this.altTileRef = params.altTileRef ?? null;
 
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
@@ -159,7 +159,7 @@ export class DualGrid extends BaseGrid {
         return tiles;
     }
 
-    getTileRefAt(row: number, col: number): string|null {
+    getTileRefAt(row: number, col: number): T|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }

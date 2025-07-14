@@ -4,8 +4,6 @@ import * as PIXI from 'pixi.js';
 import {
     BaseGrid,
     Size,
-    FindTextureFunc,
-    GridTile,
     GridRange,
 } from './base-grid';
 
@@ -32,6 +30,8 @@ type GridParams = {
     /* The function to use when looking up textures to render */
     findTexture?: FindTextureFunc;
 }
+
+export type FindTextureFunc = (name: string) => PIXI.Texture|null;
 
 function guessTileSize(spritesheet: PIXI.Spritesheet): Size {
     for (const textureName in spritesheet.textures) {
@@ -64,7 +64,7 @@ function getTileSize(params: GridParams) {
 }
 
 
-export class Grid extends BaseGrid {
+export class Grid extends BaseGrid<string> {
     private tiles: string[][] = [];
     private _tileSize: Size;
     private renderedViewport: PIXI.Rectangle = new PIXI.Rectangle();

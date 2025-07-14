@@ -19,10 +19,8 @@ export type GridRange = {
     readonly colEnd: number;
 }
 
-export type FindTextureFunc = (name: string) => PIXI.Texture|null;
-
-export type GridTile = {
-    tileRef: string;
+export type GridTile<T> = {
+    tileRef: T;
     row: number;
     col: number
     x: number;
@@ -33,7 +31,7 @@ export type GridTile = {
  * All grids should extend from this class. Unless you're doing something
  * custom you probably don't need this.
  */
-export class BaseGrid extends PIXI.Container {
+export class BaseGrid<T> extends PIXI.Container {
     /* Sprites in this container will appear above the rendered grid. Note this
      * container shares the same coordinate system with the map and so shifting
      * the viewport around moves both the map and this container. */
@@ -140,11 +138,11 @@ export class BaseGrid extends PIXI.Container {
         }
     }
 
-    getTileRefAt(row: number, col: number): string|null {
+    getTileRefAt(row: number, col: number): T|null {
         return null;
     }
 
-    getTileAt(x: number, y: number): GridTile|null {
+    getTileAt(x: number, y: number): GridTile<T>|null {
         x += this.viewport.x;
         y += this.viewport.y;
         const row = Math.floor(y / this.tileSize.height);
