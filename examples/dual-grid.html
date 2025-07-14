@@ -31,7 +31,7 @@
             /* Let the user click around the map and change the terrain. When
              * they click it toggles the terrain type under the mouse, then if
              * they continue dragging around it continues to set the same
-             * terrain type to other cells. */ 
+             * terrain type to other cells. */
             let updatingTerrain = false;
             let updatingTileRef = true;
             app.renderer.canvas.addEventListener('mousedown', event => {
@@ -44,10 +44,12 @@
                     event.offsetX,
                     event.offsetY
                 );
-                const tile = grid.getTileAt(x, y);
-                if (tile) {
-                    updatingTileRef = !tile.tileRef;
-                    grid.setTerrainAt(tile.row, tile.col, updatingTileRef);
+                const cell = grid.getCellAt(x, y);
+                console.log('cell', cell);
+                if (cell) {
+                    updatingTileRef = !cell.tileRef;
+                    console.log('updating', cell.tileRef, updatingTileRef);
+                    grid.setTerrainAt(cell.row, cell.col, updatingTileRef);
                     updatingTerrain = true;
                 }
             });
@@ -61,9 +63,9 @@
                     event.offsetX,
                     event.offsetY
                 );
-                const tile = grid.getTileAt(x, y);
-                if (tile) {
-                    grid.setTerrainAt(tile.row, tile.col, updatingTileRef);
+                const cell = grid.getCellAt(x, y);
+                if (cell) {
+                    grid.setTerrainAt(cell.row, cell.col, updatingTileRef);
                 }
             });
             app.renderer.canvas.addEventListener('mouseup', (event) => {

@@ -73,19 +73,19 @@ function setupMarker(app, grid, elementID) {
                 event.offsetX,
                 event.offsetY
             );
-            const tile = grid.getTileAt(pos.x, pos.y);
-            if (tile) {
-                console.log('tile', tile);
+            const cell = grid.getCellAt(pos.x, pos.y);
+            if (cell) {
+                console.log('cell:', cell);
                 marker.alpha = 1;
-                marker.x = tile.x;
-                marker.y = tile.y;
+                marker.x = cell.x;
+                marker.y = cell.y;
 
                 const div = document.getElementById(elementID);
                 if (div) {
-                    div.innerText = `Tile: ${tile.tileRef || 'NA'} (${tile.row}, ${tile.col})`;
+                    div.innerText = `Cell: ${cell.tileRef || 'NA'} (${cell.row}, ${cell.col})`;
 
                     if (grid.getStackRefAt) {
-                        const stack = grid.getStackRefAt(tile.row, tile.col);
+                        const stack = grid.getStackRefAt(cell.row, cell.col);
                         div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
                         console.log(stack);
                     }

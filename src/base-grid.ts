@@ -19,7 +19,7 @@ export type GridRange = {
     readonly colEnd: number;
 }
 
-export type GridTile<T> = {
+export type CellInfo<T> = {
     tileRef: T;
     row: number;
     col: number
@@ -142,15 +142,15 @@ export class BaseGrid<T> extends PIXI.Container {
         return null;
     }
 
-    getTileAt(x: number, y: number): GridTile<T>|null {
+    getCellAt(x: number, y: number): CellInfo<T>|null {
         x += this.viewport.x;
         y += this.viewport.y;
         const row = Math.floor(y / this.tileSize.height);
         const col = Math.floor(x / this.tileSize.width);
-        const tileRef = this.getTileRefAt(row, col);
-        if (tileRef === null) {
+        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
+        const tileRef = this.getTileRefAt(row, col);
         return {
             tileRef: tileRef,
             row: row,
