@@ -238,7 +238,7 @@ export class Grid extends BaseGrid<string> {
         }
     }
 
-    getTileRefAt(row: number, col: number): string|null {
+    getTileInfoAt(row: number, col: number): string|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }

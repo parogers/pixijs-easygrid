@@ -20,7 +20,7 @@ export type GridRange = {
 }
 
 export type CellInfo<T> = {
-    tileRef: T;
+    tileInfo: T;
     row: number;
     col: number
     x: number;
@@ -138,7 +138,7 @@ export class BaseGrid<T> extends PIXI.Container {
         }
     }
 
-    getTileRefAt(row: number, col: number): T|null {
+    getTileInfoAt(row: number, col: number): T|null {
         return null;
     }
 
@@ -150,9 +150,9 @@ export class BaseGrid<T> extends PIXI.Container {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
-        const tileRef = this.getTileRefAt(row, col);
+        const tileInfo = this.getTileInfoAt(row, col);
         return {
-            tileRef: tileRef,
+            tileInfo: tileInfo,
             row: row,
             col: col,
             x: col * this.tileSize.width,

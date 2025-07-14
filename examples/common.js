@@ -82,10 +82,10 @@ function setupMarker(app, grid, elementID) {
 
                 const div = document.getElementById(elementID);
                 if (div) {
-                    div.innerText = `Cell: ${cell.tileRef || 'NA'} (${cell.row}, ${cell.col})`;
+                    div.innerText = `Cell: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
 
-                    if (grid.getStackRefAt) {
-                        const stack = grid.getStackRefAt(cell.row, cell.col);
+                    if (grid.getStackAt) {
+                        const stack = grid.getStackAt(cell.row, cell.col);
                         div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
                         console.log(stack);
                     }

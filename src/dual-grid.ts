@@ -11,8 +11,8 @@ import { Grid } from './grid';
 
 
 export type DualGridParams<T> = {
-    tileRef: T;
-    altTileRef?: T;
+    tileInfo: T;
+    altTileInfo?: T;
     tiles?: string[],
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
@@ -57,7 +57,7 @@ function makeEmpty(rows: number, cols: number) {
 
 /*
  * A dual-grid that renders based on a simple boolean terrain map. A true value
- * indicates the presence of a terrain type (given by tileRef), and a false
+ * indicates the presence of a terrain type (given by tileInfo), and a false
  * value indicates the absence. The provided spritesheet should contain exactly
  * 16 tiles arranged in a 4x4 grid following this template:
  *
@@ -82,9 +82,9 @@ export class DualGrid<T> extends BaseGrid<T> {
     terrain: boolean[][] = [];
     tileMapping: { [key: string] : string }
     // 'true' values in the terrain map to this identifying value
-    tileRef: T|null;
+    tileInfo: T|null;
     // Used for 'false' values in the terrain
-    altTileRef: T|null;
+    altTileInfo: T|null;
     grid: Grid;
 
     constructor(params: DualGridParams<T>) {
@@ -95,8 +95,8 @@ export class DualGrid<T> extends BaseGrid<T> {
             spritesheet: params.spritesheet,
             autoUpdate: false,
         })
-        this.tileRef = params.tileRef;
-        this.altTileRef = params.altTileRef ?? null;
+        this.tileInfo = params.tileInfo;
+        this.altTileInfo = params.altTileInfo ?? null;
 
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
@@ -159,12 +159,12 @@ export class DualGrid<T> extends BaseGrid<T> {
         return tiles;
     }
 
-    getTileRefAt(row: number, col: number): T|null {
+    getTileInfoAt(row: number, col: number): T|null {
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
-        const tileRef = this.terrain[row][col] ? this.tileRef : this.altTileRef;
-        return tileRef;
+        const tileInfo = this.terrain[row][col] ? this.tileInfo : this.altTileInfo;
+        return tileInfo;
     }
 
     update() {

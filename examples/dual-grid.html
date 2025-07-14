@@ -19,7 +19,7 @@
 
             const terrain = generateTerrain(100, 100);
             const grid = new easygrid.DualGrid({
-                tileRef: 'grass',
+                tileInfo: 'grass',
                 spritesheet: spritesheet,
                 terrain: terrain,
             });
@@ -33,7 +33,7 @@
              * they continue dragging around it continues to set the same
              * terrain type to other cells. */
             let updatingTerrain = false;
-            let updatingTileRef = true;
+            let updatingTileInfo = true;
             app.renderer.canvas.addEventListener('mousedown', event => {
                 if (!event.ctrlKey) {
                     return;
@@ -47,9 +47,8 @@
                 const cell = grid.getCellAt(x, y);
                 console.log('cell', cell);
                 if (cell) {
-                    updatingTileRef = !cell.tileRef;
-                    console.log('updating', cell.tileRef, updatingTileRef);
-                    grid.setTerrainAt(cell.row, cell.col, updatingTileRef);
+                    updatingTileInfo = !cell.tileInfo;
+                    grid.setTerrainAt(cell.row, cell.col, updatingTileInfo);
                     updatingTerrain = true;
                 }
             });
@@ -65,7 +64,7 @@
                 );
                 const cell = grid.getCellAt(x, y);
                 if (cell) {
-                    grid.setTerrainAt(cell.row, cell.col, updatingTileRef);
+                    grid.setTerrainAt(cell.row, cell.col, updatingTileInfo);
                 }
             });
             app.renderer.canvas.addEventListener('mouseup', (event) => {
