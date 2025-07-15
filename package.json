@@ -2,6 +2,7 @@
     "name": "@parogers/pixijs-easygrid",
     "version": "0.0.1",
     "description": "A \"good enough\" grid sprite for PixiJS",
+    "homepage": "https://github.com/parogers/pixijs-easygrid",
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
@@ -12,7 +13,6 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
-    "author": "",
     "license": "GPL-3.0",
     "peerDependencies": {
         "pixi.js": ">=8.0.2"
