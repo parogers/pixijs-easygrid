@@ -62,7 +62,7 @@
                     if (range) {
                         const rows = range.rowEnd - range.rowStart + 1;
                         const cols = range.colEnd - range.colStart + 1;
-                        visibleEl.innerText = `${rows}x${cols}`;
+                        visibleEl.innerText = `${rows}x${cols} (${rows*cols} tiles)`;
                     }
                 }
             });
@@ -74,9 +74,11 @@
             <label>
                 Zoom factor:
                 <select id="zoom">
-                    <option value="0.1">0.1</option>
-                    <option value="0.5">0.5</option>
-                    <option value="1">1</option>
+                    <option value="0.1">10%</option>
+                    <option value="0.15">15%</option>
+                    <option value="0.25">25%</option>
+                    <option value="0.5">50%</option>
+                    <option value="1">100%</option>
                 </select>
             </label>
         </div>
