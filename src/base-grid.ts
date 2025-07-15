@@ -20,7 +20,7 @@ export type GridRange = {
 }
 
 export type CellInfo<T> = {
-    tileInfo: T;
+    tileInfo: T|null;
     row: number;
     col: number
     x: number;
