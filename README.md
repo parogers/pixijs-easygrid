@@ -2,6 +2,18 @@
 
 A "good enough" grid sprite for PixiJS. This library supports basic grid rendering and also dual-grid.
 
+## Local development
+
+Run the examples locally with:
+
+```npm run dev```
+
+If you want to play around with example tile generation:
+
+```npm run dev-example-tiles```
+
+And make changes to the source tiles under examples/assets/originals/. (note you'll need [spright](https://github.com/houmain/spright) and GNU make installed to generate them)
+
 ## Demos
 
 Have a look at these [online demos](https://parogers.github.io/pixijs-easygrid-examples/index.html), and take a peek at the [source code](https://github.com/parogers/pixijs-easygrid/tree/main/examples).
