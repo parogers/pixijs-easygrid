@@ -5,10 +5,9 @@
     "homepage": "https://github.com/parogers/pixijs-easygrid",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc",
-        "serve-examples": "./scripts/serve_examples.sh",
-        "watch-web": "./scripts/watch_web.sh",
-        "watch-sample-tiles": "./scripts/watch_sample_tiles.sh",
+        "build": "vite build -c vite.config-lib.js",
+        "dev": "vite",
+        "dev-sample-tiles": "./scripts/watch_sample_tiles.sh",
         "lint": "tsc --project ./tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -20,6 +19,7 @@
     "devDependencies": {
         "browser-sync": "^3.0.3",
         "esbuild": "^0.25.6",
-        "typescript": "^5.6.3"
+        "typescript": "^5.6.3",
+        "vite": "^6.4.1"
     }
 }

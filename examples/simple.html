@@ -1,13 +1,11 @@
 <html>
-    <head>
-        <script src="https://pixijs.download/dev/pixi.js"></script>
-        <script src="require.js"></script>
-        <script src="pixijs-easygrid.js"></script>
-    </head>
     <body>
         <h1>Example: Simple</h1>
 
         <script type="module">
+            import * as PIXI from 'pixi.js';
+            import * as easygrid from 'pixijs-easygrid';
+
             const app = new PIXI.Application();
             await app.init({
                 width: 600,

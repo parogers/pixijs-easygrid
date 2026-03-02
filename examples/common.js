@@ -1,5 +1,7 @@
 
-function setupDragging(app, grid) {
+import * as PIXI from 'pixi.js';
+
+export function setupDragging(app, grid) {
     let mouseDown = false;
     let dragStartX = 0;
     let dragStartY = 0;
@@ -40,7 +42,7 @@ function setupDragging(app, grid) {
 }
 
 
-function setupFPS(elementID) {
+export function setupFPS(elementID) {
     let samples = 0;
     let seconds = 0;
     let total = 0;
@@ -60,7 +62,7 @@ function setupFPS(elementID) {
 }
 
 
-function setupMarker(app, grid, elementID) {
+export function setupMarker(app, grid, elementID) {
     const marker = makeBox(grid.tileSize.width, grid.tileSize.height);
     marker.alpha = 0;
     grid.foreground.addChild(marker);
@@ -96,7 +98,7 @@ function setupMarker(app, grid, elementID) {
 }
 
 
-function makeBox(width, height) {
+export function makeBox(width, height) {
     return new PIXI.Graphics(
         new PIXI.GraphicsContext()
             .rect(0, 0, width, height)
@@ -109,13 +111,13 @@ function makeBox(width, height) {
  * Create a terrain for use with dual-grid rendering. Returns a matrix of
  * random binary values based on a perlin noise filter that looks terrain-like.
  */
-function generateTerrain(rows, cols) {
+export function generateTerrain(rows, cols) {
     const matrix = generateTerrainFloat(rows, cols);
     return matrix.map(row => row.map(value => value > 0));
 }
 
 
-function generateTerrainFloat(rows, cols) {
+export function generateTerrainFloat(rows, cols) {
     const noise = new Noise(); //Date.now());
     const terrain = [];
     for (let row = 0; row < rows; row++) {
@@ -129,7 +131,7 @@ function generateTerrainFloat(rows, cols) {
 }
 
 
-function mouseToViewportPos(app, grid, x, y) {
+export function mouseToViewportPos(app, grid, x, y) {
     // Note sprite scaling happens after sprite positioning
     const viewX = (x - app.stage.x) / app.stage.scale.x - grid.x;
     const viewY = (y - app.stage.y) / app.stage.scale.y - grid.y;
@@ -137,6 +139,6 @@ function mouseToViewportPos(app, grid, x, y) {
 }
 
 
-function randInt(a, b) {
+export function randInt(a, b) {
     return a + Math.floor(Math.random() * (b - a + 1));
 }

@@ -1,12 +1,12 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script src="https://pixijs.download/dev/pixi.js"></script>
-        <script src="require.js"></script>
         <script src="noisejs.js"></script>
-        <script src="common.js"></script>
-        <script src="pixijs-easygrid.js"></script>
         <script type="module">
+            import * as PIXI from 'pixi.js';
+            import * as easygrid from 'pixijs-easygrid';
+            import { generateTerrainFloat, randInt, setupDragging, setupMarker } from './common.js';
+
             const div = document.getElementById('app');
             const app = new PIXI.Application();
             await app.init({
