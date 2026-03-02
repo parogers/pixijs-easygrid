@@ -13,7 +13,7 @@
             app.renderer.background.color = 0xa0a0a0;
             document.body.appendChild(app.canvas);
 
-            const spritesheet = await PIXI.Assets.load('tiles.json');
+            const spritesheet = await PIXI.Assets.load('assets/tiles.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
             function getTiles() {

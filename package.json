@@ -7,7 +7,7 @@
     "scripts": {
         "build": "vite build -c vite.config-lib.js",
         "dev": "vite",
-        "dev-sample-tiles": "./scripts/watch_sample_tiles.sh",
+        "dev-example-tiles": "./scripts/watch_sample_tiles.sh",
         "lint": "tsc --project ./tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
     },

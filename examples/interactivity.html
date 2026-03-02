@@ -22,7 +22,7 @@
             app.stage.scale = 2;
             document.body.appendChild(app.canvas);
 
-            const spritesheet = await PIXI.Assets.load('tiles.json');
+            const spritesheet = await PIXI.Assets.load('assets/tiles.json');
             spritesheet.textureSource.scaleMode = 'nearest';
 
             const tiles = [

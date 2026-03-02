@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! cd ./examples/originals; then
+if ! cd ./examples/assets/; then
     echo "cannot find tile examples"
     exit 1
 fi
