@@ -41,7 +41,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
         }
     }
 
-    getTileInfoAt(row: number, col: string): T|null {
+    getTileInfoAt(row: number, col: number): T|null {
         for (let n = this.layers.length-1; n >= 0; n--) {
             const tileInfo = this.layers[n].getTileInfoAt(row, col);
             if (tileInfo) {
