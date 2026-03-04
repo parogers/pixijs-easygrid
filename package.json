@@ -14,7 +14,7 @@
     "keywords": [],
     "license": "GPL-3.0",
     "peerDependencies": {
-        "pixi.js": ">=8.0.2"
+        "pixi.js": "^8.16.0"
     },
     "devDependencies": {
         "browser-sync": "^3.0.3",
