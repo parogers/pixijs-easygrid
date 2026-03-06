@@ -48,7 +48,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 return tileInfo;
             }
         }
-        return null;
+        return this.bottomTileInfo;
     }
 
     /*
