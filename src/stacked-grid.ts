@@ -41,9 +41,13 @@ export class StackedGrid<T> extends BaseGrid<T> {
         }
     }
 
-    getTileInfoAt(row: number, col: number): T|null {
+    getTileInfoAt(x: number, y: number): T|null {
+        const gridPos = this.getGridPos(x, y);
+        if (!gridPos) {
+            return null;
+        }
         for (let n = this.layers.length-1; n >= 0; n--) {
-            const tileInfo = this.layers[n].getTileInfoAt(row, col);
+            const tileInfo = this.layers[n].getTileInfoAt(gridPos.row, gridPos.col);
             if (tileInfo) {
                 return tileInfo;
             }

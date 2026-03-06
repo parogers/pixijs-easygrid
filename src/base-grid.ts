@@ -27,6 +27,11 @@ export type CellInfo<T> = {
     y: number;
 }
 
+export type GridPos = {
+    row: number;
+    col: number;
+}
+
 /*
  * All grids should extend from this class. Unless you're doing something
  * custom you probably don't need this.
@@ -138,23 +143,34 @@ export class BaseGrid<T> extends PIXI.Container {
         }
     }
 
-    getTileInfoAt(row: number, col: number): T|null {
-        return null;
-    }
-
-    getCellAt(x: number, y: number): CellInfo<T>|null {
+    getGridPos(x: number, y: number): GridPos|null {
         const row = Math.floor(y / this.tileSize.height);
         const col = Math.floor(x / this.tileSize.width);
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
             return null;
         }
-        const tileInfo = this.getTileInfoAt(row, col);
+        return {
+            row,
+            col,
+        };
+    }
+
+    getTileInfoAt(x: number, y: number): T|null {
+        return null;
+    }
+
+    getCellAt(x: number, y: number): CellInfo<T>|null {
+        const gridPos = this.getGridPos(x, y);
+        if (!gridPos) {
+            return null;
+        }
+        const tileInfo = this.getTileInfoAt(x, y);
         return {
             tileInfo: tileInfo,
-            row: row,
-            col: col,
-            x: col * this.tileSize.width,
-            y : row * this.tileSize.height,
+            row: gridPos.row,
+            col: gridPos.col,
+            x: gridPos.col * this.tileSize.width,
+            y: gridPos.row * this.tileSize.height,
         };
     }
 

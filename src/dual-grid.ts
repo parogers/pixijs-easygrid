@@ -159,11 +159,12 @@ export class DualGrid<T> extends BaseGrid<T> {
         return tiles;
     }
 
-    getTileInfoAt(row: number, col: number): T|null {
-        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
+    getTileInfoAt(x: number, y: number): T|null {
+        const gridPos = this.getGridPos(x, y);
+        if (!gridPos) {
             return null;
         }
-        const tileInfo = this.terrain[row][col] ? this.tileInfo : this.altTileInfo;
+        const tileInfo = this.terrain[gridPos.row][gridPos.col] ? this.tileInfo : this.altTileInfo;
         return tileInfo;
     }
 
