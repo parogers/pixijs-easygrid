@@ -143,8 +143,6 @@ export class BaseGrid<T> extends PIXI.Container {
     }
 
     getCellAt(x: number, y: number): CellInfo<T>|null {
-        x += this.viewport.x;
-        y += this.viewport.y;
         const row = Math.floor(y / this.tileSize.height);
         const col = Math.floor(x / this.tileSize.width);
         if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {

@@ -69,7 +69,7 @@ export function setupMarker(app, grid, elementID) {
 
     app.renderer.canvas.addEventListener('click', (event) => {
         if (event.shiftKey) {
-            const pos = mouseToViewportPos(
+            const pos = mouseToMapPos(
                 app,
                 grid,
                 event.offsetX,
@@ -77,19 +77,16 @@ export function setupMarker(app, grid, elementID) {
             );
             const cell = grid.getCellAt(pos.x, pos.y);
             if (cell) {
-                console.log('cell:', cell);
                 marker.alpha = 1;
                 marker.x = cell.x;
                 marker.y = cell.y;
 
                 const div = document.getElementById(elementID);
                 if (div) {
-                    div.innerText = `Cell: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
-
+                    div.innerText = `Tile info: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
                     if (grid.getStackAt) {
                         const stack = grid.getStackAt(cell.row, cell.col);
                         div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
-                        console.log(stack);
                     }
                 }
             }
@@ -136,6 +133,15 @@ export function mouseToViewportPos(app, grid, x, y) {
     const viewX = (x - app.stage.x) / app.stage.scale.x - grid.x;
     const viewY = (y - app.stage.y) / app.stage.scale.y - grid.y;
     return { x: viewX, y: viewY };
+}
+
+
+export function mouseToMapPos(app, grid, x, y) {
+    const view = mouseToViewportPos(app, grid, x, y);
+    return {
+        x: view.x + grid.viewport.x,
+        y: view.y + grid.viewport.y,
+    };
 }
 
 
