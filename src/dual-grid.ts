@@ -17,6 +17,8 @@ export type DualGridParams<T> = {
     spritesheet: PIXI.Spritesheet,
     autoUpdate?: boolean,
     terrain?: boolean[][],
+    debugGridColor?: number;
+    debugDualGridColor?: number;
 }
 
 
@@ -90,10 +92,12 @@ export class DualGrid<T> extends BaseGrid<T> {
     constructor(params: DualGridParams<T>) {
         super({
             autoUpdate: params.autoUpdate,
+            debugGridColor: params.debugDualGridColor,
         });
         this.grid = new Grid({
             spritesheet: params.spritesheet,
             autoUpdate: false,
+            debugGridColor: params.debugGridColor,
         })
         this.tileInfo = params.tileInfo;
         this.altTileInfo = params.altTileInfo ?? null;
@@ -130,6 +134,7 @@ export class DualGrid<T> extends BaseGrid<T> {
 
     setTerrainAt(row: number, col: number, value: boolean) {
         this.terrain[row][col] = value;
+        // TODO - update neighbours only
         this.grid.setTiles(this.makeTiles());
     }
 

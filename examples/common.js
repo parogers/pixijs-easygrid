@@ -64,6 +64,7 @@ export function setupFPS(elementID) {
 
 export function setupMarker(app, grid, elementID) {
     const marker = makeBox(grid.tileSize.width, grid.tileSize.height);
+    marker.zIndex = 1; // show above debug grid
     marker.alpha = 0;
     grid.foreground.addChild(marker);
 

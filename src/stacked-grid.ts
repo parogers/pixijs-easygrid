@@ -10,6 +10,8 @@ export type StackedGridParams<T> = {
     layers: StackedLayerParams<T>[];
     autoUpdate?: boolean;
     bottomTileInfo?: T;
+    debugGridColor?: number;
+    debugDualGridColor?: number;
 }
 
 
@@ -35,6 +37,8 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 spritesheet: layer.spritesheet,
                 terrain: layer.terrain,
                 autoUpdate: false,
+                debugDualGridColor: params.debugDualGridColor,
+                debugGridColor: params.debugGridColor,
             });
             this.layers.push(grid);
             this.gridContainer.addChild(grid);

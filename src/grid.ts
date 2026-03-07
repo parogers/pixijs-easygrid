@@ -29,6 +29,7 @@ type GridParams = {
     fixedViewport?: boolean;
     /* The function to use when looking up textures to render */
     findTexture?: FindTextureFunc;
+    debugGridColor?: number;
 }
 
 export type FindTextureFunc = (name: string) => PIXI.Texture|null;
@@ -79,6 +80,7 @@ export class Grid extends BaseGrid<string> {
         super({
             viewportMask: params.viewportMask,
             autoUpdate: params.autoUpdate,
+            debugGridColor: params.debugGridColor,
         });
         this.tilesDirty = true;
         this.spritesheet = params.spritesheet ?? null;

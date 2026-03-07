@@ -5,6 +5,7 @@ import * as PIXI from 'pixi.js';
 export type BaseGridParams = {
     viewportMask?: boolean;
     autoUpdate?: boolean;
+    debugGridColor?: number;
 }
 
 export type Size = {
@@ -50,6 +51,8 @@ export class BaseGrid<T> extends PIXI.Container {
      * on screen. Note if either the viewport width or height are set to zero,
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
+    /* Whether to render the underlying grid and what colour */
+    debugGridColor: number|null = null;
     /* Used to define the bounds of the viewport mask */
     private maskGraphics: PIXI.Graphics;
     /* The viewport size on the previous iteration. Used to update the mask. */
@@ -60,11 +63,13 @@ export class BaseGrid<T> extends PIXI.Container {
      * can optimize for rendering to a viewport that's smaller than the grid. */
     private viewportMask: boolean = true;
     private _autoUpdate: boolean = false;
+    private debugGrid: PIXI.Graphics|null = null;
 
     constructor(params: BaseGridParams = {}) {
         super();
         this.autoUpdate = params.autoUpdate ?? true;
         this.viewportMask = params.viewportMask ?? true;
+        this.debugGridColor = params.debugGridColor ?? null;
         this.viewContainer.addChild(this.gridContainer);
         this.viewContainer.addChild(this.foreground);
         this.addChild(this.viewContainer);
@@ -130,6 +135,20 @@ export class BaseGrid<T> extends PIXI.Container {
         }
     }
 
+    updateDebugGrid() {
+        if (this.debugGridColor !== null) {
+            if (!this.debugGrid) {
+                this.debugGrid = this.makeDebugGrid(this.debugGridColor);
+                this.foreground.addChild(this.debugGrid);
+            }
+        } else {
+            if (this.debugGrid) {
+                this.foreground.removeChild(this.debugGrid);
+                this.debugGrid = null;
+            }
+        }
+    }
+
     /* Subclasses should call this every frame to update the viewport state */
     update() {
         const updateViewportSize = (
@@ -141,6 +160,7 @@ export class BaseGrid<T> extends PIXI.Container {
             this.oldViewportWidth = this.viewport.width;
             this.oldViewportHeight = this.viewport.height;
         }
+        this.updateDebugGrid();
     }
 
     getGridPos(x: number, y: number): GridPos|null {
@@ -204,5 +224,22 @@ export class BaseGrid<T> extends PIXI.Container {
             colStart,
             colEnd,
         };
+    }
+
+    private makeDebugGrid(color: number) {
+        const graphics = new PIXI.Graphics();
+        const tw = this.tileSize.width;
+        const th = this.tileSize.height;
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                graphics.rect(
+                    tw*col,
+                    th*row,
+                    tw,
+                    th
+                ).stroke({ color: color });
+            }
+        }
+        return graphics;
     }
 }
