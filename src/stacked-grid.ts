@@ -42,12 +42,8 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     getTileInfoAt(x: number, y: number): T|null {
-        const gridPos = this.getGridPos(x, y);
-        if (!gridPos) {
-            return null;
-        }
         for (let n = this.layers.length-1; n >= 0; n--) {
-            const tileInfo = this.layers[n].getTileInfoAt(gridPos.row, gridPos.col);
+            const tileInfo = this.layers[n].getTileInfoAt(x, y);
             if (tileInfo) {
                 return tileInfo;
             }
@@ -60,10 +56,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
      * grid in the same order as StackedGridParams.layers (note the bottom
      * most constant layer, bottomTileInfo, is not included in this list)
      */
-    getStackAt(row: number, col: number): (T|null)[] {
+    getStackAt(x: number, y: number): (T|null)[] {
         const stack = [];
         for (let n = 0; n < this.layers.length; n++) {
-            const tileInfo = this.layers[n].getTileInfoAt(row, col);
+            const tileInfo = this.layers[n].getTileInfoAt(x, y);
             stack.push(tileInfo ?? null);
         }
         return stack;

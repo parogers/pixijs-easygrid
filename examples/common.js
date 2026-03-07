@@ -85,7 +85,7 @@ export function setupMarker(app, grid, elementID) {
                 if (div) {
                     div.innerText = `Tile info: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
                     if (grid.getStackAt) {
-                        const stack = grid.getStackAt(cell.row, cell.col);
+                        const stack = grid.getStackAt(pos.x, pos.y);
                         div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
                     }
                 }

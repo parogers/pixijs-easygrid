@@ -7,6 +7,13 @@
             import * as easygrid from 'pixijs-easygrid';
             import { generateTerrainFloat, randInt, setupDragging, setupMarker } from './common.js';
 
+            window.addEventListener('keydown', event => {
+                const dialog = document.querySelector('dialog');
+                if (event.key === 'Escape' && dialog) {
+                    dialog.close();
+                }
+            })
+
             const div = document.getElementById('app');
             const app = new PIXI.Application();
             await app.init({
@@ -33,6 +40,10 @@
                     if (row < 0 || row >= rows || col < 0 || col >= cols) break;
                 }
             }
+            // Testing narrow channels/canyons
+            dirtTerrain[12][14] = false;
+            dirtTerrain[13][14] = false;
+            grassTerrain[13][14] = false;
 
             const grassSheet = await PIXI.Assets.load('assets/tiles-grass.json');
             const dirtSheet = await PIXI.Assets.load('assets/tiles-dirt.json');
