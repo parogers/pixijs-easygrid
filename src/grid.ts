@@ -157,9 +157,11 @@ export class Grid extends BaseGrid<string> {
         if (!this.tiles || !range) {
             return context;
         }
+        const tw = this.tileSize.width;
+        const th = this.tileSize.height;
         context.translate(
-            this.tileSize.width*range.colStart,
-            this.tileSize.height*range.rowStart
+            tw*range.colStart,
+            th*range.rowStart
         );
         for (let row = range.rowStart; row <= range.rowEnd; row++) {
             for (let col = range.colStart; col <= range.colEnd; col++) {
@@ -170,12 +172,9 @@ export class Grid extends BaseGrid<string> {
                         context.texture(tex);
                     }
                 }
-                context.translate(this.tileSize.width, 0);
+                context.translate(tw, 0);
             }
-            context.translate(
-                -this.tileSize.width*(range.colEnd - range.colStart + 1),
-                this.tileSize.height
-            );
+            context.translate(-tw*(range.colEnd - range.colStart + 1), th);
         }
         this.renderedViewport.x = this.viewport.x;
         this.renderedViewport.y = this.viewport.y;
