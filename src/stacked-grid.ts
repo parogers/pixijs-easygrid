@@ -105,10 +105,11 @@ export class StackedGrid<T> extends BaseGrid<T> {
      * subtiles (eg subtile 0, 1) look like dirt.
      */
     getSubTileInfoAt(x: number, y: number): T|null {
-        const tile = this.getTileInfoAt(x, y);
-        if (!tile) {
+        const pos = this.getGridPos(x, y);
+        if (!pos) {
             return null;
         }
+        const tile = this.topTiles[pos.row][pos.col];
         const tw = this.tileSize.width;
         const th = this.tileSize.height;
         const xOffset = x % tw;
@@ -117,16 +118,13 @@ export class StackedGrid<T> extends BaseGrid<T> {
         const xThirds = ((xOffset / (tw/3)) | 0) - 1;
         const yThirds = ((yOffset / (th/3)) | 0) - 1;
         if (xThirds === 0 || yThirds === 0) {
-            const offsetTile = this.getTileInfoAt(
-                x + xThirds * tw,
-                y + yThirds * th
-            );
+            const offsetTile = this.topTiles[pos.row + yThirds]?.[pos.col + xThirds];
             /* Note since this is a stack of dual-grid layers we always want the
              * top-most visible tile that is intruding in the lower layer. */
             return this.getTopTile(offsetTile, tile);
         }
-        const offsetTile1 = this.getTileInfoAt(x, y + yThirds * th);
-        const offsetTile2 = this.getTileInfoAt(x + xThirds * tw, y);
+        const offsetTile1 = this.topTiles[pos.row + yThirds]?.[pos.col];
+        const offsetTile2 = this.topTiles[pos.row]?.[pos.col + xThirds];
         return this.getTopTile(offsetTile1, this.getTopTile(offsetTile2, tile));
     }
 
