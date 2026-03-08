@@ -88,6 +88,8 @@ export class DualGrid<T> extends BaseGrid<T> {
     // Used for 'false' values in the terrain
     altTileInfo: T|null;
     grid: Grid;
+    // Note: this should only be used internally to easygrid
+    onTerrainUpdate = () => {};
 
     constructor(params: DualGridParams<T>) {
         super({
@@ -130,12 +132,14 @@ export class DualGrid<T> extends BaseGrid<T> {
     setTerrain(terrain: boolean[][]) {
         this.terrain = terrain;
         this.grid.setTiles(this.makeTiles());
+        this.onTerrainUpdate();
     }
 
     setTerrainAt(row: number, col: number, value: boolean) {
         this.terrain[row][col] = value;
         // TODO - update neighbours only
         this.grid.setTiles(this.makeTiles());
+        this.onTerrainUpdate();
     }
 
     private makeTiles() {

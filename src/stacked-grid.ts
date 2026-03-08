@@ -26,6 +26,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
     tileDepths: Map<T|null, number> = new Map();
+    topTiles: (T|null)[][] = [];
 
     constructor(params: StackedGridParams<T>) {
         super({
@@ -42,20 +43,55 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 debugDualGridColor: params.debugDualGridColor,
                 debugGridColor: params.debugGridColor,
             });
+            grid.onTerrainUpdate = () => {
+                this.updateTopTiles();
+            }
             this.layers.push(grid);
             this.gridContainer.addChild(grid);
             this.tileDepths.set(layer.tileInfo, this.layers.length);
         }
+        this.updateTopTiles();
+    }
+
+    updateTopTiles() {
+        const getTileInfo = (x: number, y: number): T|null => {
+            for (let n = this.layers.length-1; n >= 0; n--) {
+                const tileInfo = this.layers[n].getTileInfoAt(x, y);
+                if (tileInfo) {
+                    return tileInfo;
+                }
+            }
+            return this.bottomTileInfo;
+        }
+        this.topTiles = [];
+        for (let row = 0; row < this.rows; row++) {
+            this.topTiles.push([]);
+            for (let col = 0; col < this.cols; col++) {
+                const tile = getTileInfo(
+                    col*this.tileSize.width + 1,
+                    row*this.tileSize.height + 1
+                );
+                this.topTiles[this.topTiles.length-1].push(tile);
+            }
+        }
     }
 
     getTileInfoAt(x: number, y: number): T|null {
-        for (let n = this.layers.length-1; n >= 0; n--) {
-            const tileInfo = this.layers[n].getTileInfoAt(x, y);
-            if (tileInfo) {
-                return tileInfo;
-            }
+        const pos = this.getGridPos(x, y);
+        if (!pos) {
+            return null;
         }
-        return this.bottomTileInfo;
+        return this.topTiles[pos.row][pos.col];
+    }
+
+    /* Returns the tile (info) that appears above the other */
+    getTopTile(tile1: T|null, tile2: T|null): T|null {
+        const depth1 = this.tileDepths.get(tile1) ?? 0;
+        const depth2 = this.tileDepths.get(tile2) ?? 0;
+        if (depth1 > depth2) {
+            return tile1;
+        }
+        return tile2;
     }
 
     /*
@@ -69,17 +105,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
      * subtiles (eg subtile 0, 1) look like dirt.
      */
     getSubTileInfoAt(x: number, y: number): T|null {
-        /* Note since this is a stack of dual-grid layers we always want the
-         * top-most visible tile that is intruding in the lower layer. */
-        const getTopTile = (tile1: T|null, tile2: T|null): T|null => {
-            const depth1 = this.tileDepths.get(tile1) ?? 0;
-            const depth2 = this.tileDepths.get(tile2) ?? 0;
-            if (depth1 > depth2) {
-                return tile1;
-            }
-            return tile2;
-        }
         const tile = this.getTileInfoAt(x, y);
+        if (!tile) {
+            return null;
+        }
         const tw = this.tileSize.width;
         const th = this.tileSize.height;
         const xOffset = x % tw;
@@ -92,11 +121,13 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 x + xThirds * tw,
                 y + yThirds * th
             );
-            return getTopTile(offsetTile, tile);
+            /* Note since this is a stack of dual-grid layers we always want the
+             * top-most visible tile that is intruding in the lower layer. */
+            return this.getTopTile(offsetTile, tile);
         }
         const offsetTile1 = this.getTileInfoAt(x, y + yThirds * th);
         const offsetTile2 = this.getTileInfoAt(x + xThirds * tw, y);
-        return getTopTile(offsetTile1, getTopTile(offsetTile2, tile));
+        return this.getTopTile(offsetTile1, this.getTopTile(offsetTile2, tile));
     }
 
     /*
