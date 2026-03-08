@@ -110,7 +110,12 @@ const grassSheet = await PIXI.Assets.load('tiles-grass.json');
 const dirtSheet = await PIXI.Assets.load('tiles-dirt.json');
 const treeSheet = await PIXI.Assets.load('tiles-trees.json');
 // Each terrain sets up the dual-grid for that layer
-const dirtTerrain = [/* ... */];
+const dirtTerrain = [
+    [true, true, true, false, false, /* ... */],
+    /* ... */
+];
+const grassTerrain = [/* ... */];
+const treeTerrain = [/* ... */];
 const grid = new easygrid.StackedGrid({
     bottomTileInfo: 'water',
     layers: [
@@ -133,6 +138,27 @@ const grid = new easygrid.StackedGrid({
 });
 grid.layers[0]; // DualGrid representing the dirt/water layer
 grid.layers[1]; // DualGrid representing the grass layer
-grid.getCellAt(100, 150).tileRef; // The top-most tile at that position (eg. "grass")
+grid.getCellAt(100, 150).tileInfo; // The top-most tile at that position (eg. "grass")
 grid.getStackAt(row, col); // A vertical slice of the grid (list of tileInfo objects for each layer)
+```
+
+Stacked grids divide each tile into a 3x3 grid of subtiles, where each subtile more closely matches what appears on the screen. This happens because neighbouring tiles can "intrude" into a given tile. (the nature of dual-grid rendering) The subtile is an approximate "visual match" for what's under the given point.
+
+```javascript
+/*
+ * The stacked terrain looks something like: (each tile is 8x8 pixels)
+ *
+ * G|D|D
+ * -+-+-
+ * G|D|D
+ * -+-+-
+ * G|G|G
+ *
+ */
+grid.getTileInfoAt(0, 0); // G
+grid.getTileInfoAt(8, 8); // D
+grid.getSubTileInfoAt(8, 8); // G (because grass intrudes over dirt)
+grid.getSubTileInfoAt(12, 12); // D (middle of the centre dirt tile)
+grid.getSubTileInfoAt(12, 8); // D (top of the centre dirt tile)
+grid.getSubTileInfoAt(7, 12); // G (because grass is above the dirt)
 ```
