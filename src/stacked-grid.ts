@@ -25,12 +25,14 @@ export type StackedLayerParams<T> = {
 export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
+    tileDepths: Map<T|null, number> = new Map();
 
     constructor(params: StackedGridParams<T>) {
         super({
             autoUpdate: params.autoUpdate,
         });
         this.bottomTileInfo = params.bottomTileInfo ?? null;
+        this.tileDepths.set(this.bottomTileInfo, 0);
         for (let layer of params.layers) {
             const grid = new DualGrid<T>({
                 tileInfo: layer.tileInfo,
@@ -42,6 +44,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
             });
             this.layers.push(grid);
             this.gridContainer.addChild(grid);
+            this.tileDepths.set(layer.tileInfo, this.layers.length);
         }
     }
 
@@ -53,6 +56,47 @@ export class StackedGrid<T> extends BaseGrid<T> {
             }
         }
         return this.bottomTileInfo;
+    }
+
+    /*
+     * In (dual) stacked grids, each tile can be divided into a 3x3 grid of
+     * subtiles that more accurately represent what the tile looks like on
+     * screen. That's because neighbouring tiles can "intrude" into a neighbour
+     * tile because of dual-grid rendering.
+     *
+     * Eg a water tile might be bordered by dirt on all sides making
+     * the center of that tile (subtile 1, 1) fully water, but the surrounding
+     * subtiles (eg subtile 0, 1) look like dirt.
+     */
+    getSubTileInfoAt(x: number, y: number): T|null {
+        /* Note since this is a stack of dual-grid layers we always want the
+         * top-most visible tile that is intruding in the lower layer. */
+        const getTopTile = (tile1: T|null, tile2: T|null): T|null => {
+            const depth1 = this.tileDepths.get(tile1) ?? 0;
+            const depth2 = this.tileDepths.get(tile2) ?? 0;
+            if (depth1 > depth2) {
+                return tile1;
+            }
+            return tile2;
+        }
+        const tile = this.getTileInfoAt(x, y);
+        const tw = this.tileSize.width;
+        const th = this.tileSize.height;
+        const xOffset = x % tw;
+        const yOffset = y % th;
+        // Which thirds subtile we are targeting (ranging -1, 0, 1)
+        const xThirds = ((xOffset / (tw/3)) | 0) - 1;
+        const yThirds = ((yOffset / (th/3)) | 0) - 1;
+        if (xThirds === 0 || yThirds === 0) {
+            const offsetTile = this.getTileInfoAt(
+                x + xThirds * tw,
+                y + yThirds * th
+            );
+            return getTopTile(offsetTile, tile);
+        }
+        const offsetTile1 = this.getTileInfoAt(x, y + yThirds * th);
+        const offsetTile2 = this.getTileInfoAt(x + xThirds * tw, y);
+        return getTopTile(offsetTile1, getTopTile(offsetTile2, tile));
     }
 
     /*
