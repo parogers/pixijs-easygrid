@@ -3,10 +3,13 @@
     "version": "0.0.1",
     "description": "A \"good enough\" grid sprite for PixiJS",
     "homepage": "https://github.com/parogers/pixijs-easygrid",
-    "main": "dist/index.js",
+    "main": "dist/pixijs-easygrid.umd.js",
+    "module": "dist/pixijs-easygrid.mjs",
+    "types": "./dist/index.d.ts",
     "scripts": {
         "build": "vite build -c vite.config-lib.js",
-        "dev": "vite",
+        "build-watch": "vite build -c vite.config-lib.js --watch",
+        "dev": "vite --open /examples/index.html",
         "dev-example-tiles": "./scripts/watch_sample_tiles.sh",
         "lint": "tsc --project ./tsconfig.json --noEmit",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,5 +26,11 @@
         "unplugin-dts": "^1.0.0-beta.6",
         "vite": "^6.4.1",
         "vite-plugin-restart": "^2.0.0"
+    },
+    "exports": {
+        ".": {
+            "import": "./dist/pixijs-easygrid.mjs",
+            "require": "dist/pixijs-easygrid.umd.js"
+        }
     }
 }
