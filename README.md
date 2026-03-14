@@ -138,6 +138,7 @@ const grid = new easygrid.StackedGrid({
 });
 grid.layers[0]; // DualGrid representing the dirt/water layer
 grid.layers[1]; // DualGrid representing the grass layer
+grid.getLayer('grass'); // Returns DualGrid by matching tileInfo
 grid.getCellAt(100, 150).tileInfo; // The top-most tile at that position (eg. "grass")
 grid.getStackAt(row, col); // A vertical slice of the grid (list of tileInfo objects for each layer)
 ```

@@ -142,6 +142,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
         return stack;
     }
 
+    getLayer(tileInfo: T): DualGrid|null {
+        return this.layers.find(layer => layer.tileInfo === tileInfo) ?? null;
+    }
+
     get rows(): number {
         return this.layers[0].rows;
     }
