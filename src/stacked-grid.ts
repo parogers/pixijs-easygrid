@@ -10,6 +10,7 @@ export type StackedGridParams<T> = {
     layers: StackedLayerParams<T>[];
     autoUpdate?: boolean;
     bottomTileInfo?: T;
+    bottomLayerHeight?: number;
     debugGridColor?: number;
     debugDualGridColor?: number;
 }
@@ -19,6 +20,7 @@ export type StackedLayerParams<T> = {
     tileInfo: T;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
+    height?: number;
 }
 
 
@@ -26,6 +28,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
     tileDepths: Map<T|null, number> = new Map();
+    tileHeights: Map<T|null, number> = new Map();
     topTiles: (T|null)[][] = [];
 
     constructor(params: StackedGridParams<T>) {
@@ -34,6 +37,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
         });
         this.bottomTileInfo = params.bottomTileInfo ?? null;
         this.tileDepths.set(this.bottomTileInfo, 0);
+        this.tileHeights.set(this.bottomTileInfo, params.bottomLayerHeight ?? 0);
         for (let layer of params.layers) {
             const grid = new DualGrid<T>({
                 tileInfo: layer.tileInfo,
@@ -49,6 +53,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
             this.layers.push(grid);
             this.gridContainer.addChild(grid);
             this.tileDepths.set(layer.tileInfo, this.layers.length);
+            this.tileHeights.set(layer.tileInfo, layer.height ?? this.layers.length);
         }
         this.updateTopTiles();
     }
@@ -140,6 +145,14 @@ export class StackedGrid<T> extends BaseGrid<T> {
             stack.push(tileInfo ?? null);
         }
         return stack;
+    }
+
+    getHeightAt(x: number, y: number): number {
+        const tile = this.getSubTileInfoAt(x, y);
+        if (!tile) {
+            return this.bottomLayerHeight;
+        }
+        return this.tileHeights.get(tile);
     }
 
     getLayer(tileInfo: T): DualGrid|null {

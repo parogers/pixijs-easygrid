@@ -61,7 +61,19 @@ cell.row, cell.col; // Grid position
 cell.tileInfo; // The name of the tile eg. "dirt"
 ```
 
-## DualGrid
+### Setting the viewport
+
+All grids support a viewport that determines what area of the grid actually gets rendered. Basically it's a camera you can move around the map eg. as the player moves. The library will only render the area defined by the viewport, so setting the width/height can greatly improve performance.
+
+```javascript
+// Render the rectangular region of the grid x=10..110 and y=50..150
+grid.viewport.x = 10;
+grid.viewport.y = 50;
+grid.viewport.width = 100;
+grid.viewport.height = 100;
+```
+
+### DualGrid
 
 Have a look at [this explanation](https://www.youtube.com/watch?v=jEWFSv3ivTg) of how dual-grid rendering works.
 
@@ -143,11 +155,13 @@ grid.getCellAt(100, 150).tileInfo; // The top-most tile at that position (eg. "g
 grid.getStackAt(row, col); // A vertical slice of the grid (list of tileInfo objects for each layer)
 ```
 
+#### Sub-tiles
+
 Stacked grids divide each tile into a 3x3 grid of subtiles, where each subtile more closely matches what appears on the screen. This happens because neighbouring tiles can "intrude" into a given tile. (the nature of dual-grid rendering) The subtile is an approximate "visual match" for what's under the given point.
 
 ```javascript
 /*
- * The stacked terrain looks something like: (each tile is 8x8 pixels)
+ * The top of the stacked terrain looks something like: (say each tile is 8x8 pixels)
  *
  * G|D|D
  * -+-+-
@@ -163,3 +177,39 @@ grid.getSubTileInfoAt(12, 12); // D (middle of the centre dirt tile)
 grid.getSubTileInfoAt(12, 8); // D (top of the centre dirt tile)
 grid.getSubTileInfoAt(7, 12); // G (because grass is above the dirt)
 ```
+
+
+#### Height map
+
+The StackedGrid supports a simple height map, where each layer can be associated with a height value. (default is the layer index)
+
+```javascript
+const grid = new easygrid.StackedGrid({
+    bottomTileInfo: 'water',
+    bottomLayerHeight: -1,
+    layers: [
+        {
+            tileInfo: 'dirt',
+            spritesheet: dirtSheet,
+            terrain: dirtTerrain,
+            height: 0,
+        },
+        {
+            tileInfo: 'grass',
+            spritesheet: grassSheet,
+            terrain: grassTerrain,
+            height: 0,
+        },
+        {
+            tileInfo: 'tree',
+            spritesheet: treeSheet,
+            terrain: treesTerrain,
+            height: 1,
+        },
+    ],
+});
+
+grid.getHeightAt(4, 12);
+```
+
+The height at a position is determined by the corresponding sub-tile.
