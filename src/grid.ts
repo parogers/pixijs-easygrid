@@ -72,7 +72,6 @@ export class Grid extends BaseGrid<string> {
     private renderedGridRange: GridRange | null = null;
     private findTexture: FindTextureFunc;
     private graphics: PIXI.Graphics;
-    private fixedViewport: boolean = true;
     private tilesDirty: boolean = false;
     private spritesheet: PIXI.Spritesheet|null;
 
@@ -81,13 +80,13 @@ export class Grid extends BaseGrid<string> {
             viewportMask: params.viewportMask,
             autoUpdate: params.autoUpdate,
             debugGridColor: params.debugGridColor,
+            fixedViewport: params.fixedViewport,
         });
         this.tilesDirty = true;
         this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
         this.gridContainer.addChild(this.graphics);
         this._tileSize = getTileSize(params);
-        this.fixedViewport = params.fixedViewport ?? true;
 
         if (params.findTexture) {
             this.findTexture = params.findTexture;
@@ -239,10 +238,11 @@ export class Grid extends BaseGrid<string> {
         }
     }
 
-    getTileInfoAt(row: number, col: number): string|null {
-        if (row < 0 || col < 0 || row >= this.rows || col >= this.cols) {
+    getTileInfoAt(x: number, y: number): string|null {
+        const pos = this.getGridPos(x, y);
+        if (!pos) {
             return null;
         }
-        return this.tiles[row][col];
+        return this.tiles[pos.row][pos.col];
     }
 }

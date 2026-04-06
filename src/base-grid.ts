@@ -6,6 +6,7 @@ export type BaseGridParams = {
     viewportMask?: boolean;
     autoUpdate?: boolean;
     debugGridColor?: number;
+    fixedViewport?: boolean;
 }
 
 export type Size = {
@@ -64,6 +65,7 @@ export class BaseGrid<T> extends PIXI.Container {
     private viewportMask: boolean = true;
     private _autoUpdate: boolean = false;
     private debugGrid: PIXI.Graphics|null = null;
+    protected fixedViewport: boolean = true;
 
     constructor(params: BaseGridParams = {}) {
         super();
@@ -75,6 +77,7 @@ export class BaseGrid<T> extends PIXI.Container {
         this.addChild(this.viewContainer);
         this.maskGraphics = new PIXI.Graphics();
         this.addChild(this.maskGraphics);
+        this.fixedViewport = params.fixedViewport ?? true;
     }
 
     /*
@@ -159,6 +162,13 @@ export class BaseGrid<T> extends PIXI.Container {
             this.updateMask();
             this.oldViewportWidth = this.viewport.width;
             this.oldViewportHeight = this.viewport.height;
+        }
+        if (this.fixedViewport) {
+            this.maskGraphics.x = 0;
+            this.maskGraphics.y = 0;
+        } else {
+            this.maskGraphics.x = this.viewport.x;
+            this.maskGraphics.y = this.viewport.y;
         }
         this.updateDebugGrid();
     }

@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <script type="module">
+            import * as PIXI from 'pixi.js';
+            import * as easygrid from 'pixijs-easygrid';
+            import { setupFPS } from './common.js'
+
+            const app = new PIXI.Application();
+            await app.init({
+                width: 600,
+                height: 400,
+            });
+            app.renderer.background.color = 0xa0a0a0;
+            document.body.appendChild(app.canvas);
+
+            const spritesheet = await PIXI.Assets.load('assets/tiles.json');
+            spritesheet.textureSource.scaleMode = 'nearest';
+
+            function getTiles() {
+                const rows = 50;
+                const cols = 50;
+                const tiles = [];
+                for (let row = 0; row < rows; row++) {
+                    tiles.push([]);
+                    for (let col = 0; col < cols; col++) {
+                        const textureName = Math.random() < 0.25 ? 'dirt-full' : 'grass-full';
+                        tiles[row].push(textureName);
+                    }
+                }
+                return tiles;
+            }
+
+            const grid = new easygrid.Grid({
+                spritesheet: spritesheet,
+                fixedViewport: false,
+            });
+            grid.setTiles(getTiles());
+            grid.viewport.x = 0;
+            grid.viewport.y = 0;
+            grid.viewport.width = 200;
+            grid.viewport.height = 150;
+            app.stage.addChild(grid);
+            app.stage.scale = 1;
+
+            const box = new PIXI.Graphics().rect(0, 0, grid.viewport.width, grid.viewport.height).stroke({ color: 0xff0000, width: 4 });
+            box.x = grid.viewport.x;
+            box.y = grid.viewport.y;
+            grid.foreground.addChild(box);
+
+            PIXI.Ticker.shared.add((tm) => {
+                grid.viewport.x = 50 + Math.cos(tm.lastTime/800)*50;
+                grid.viewport.y = 25 + Math.cos(tm.lastTime/600)*50;
+                box.x = grid.viewport.x;
+                box.y = grid.viewport.y;
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Example: moving viewport</h1>
+    </body>
+</html>
