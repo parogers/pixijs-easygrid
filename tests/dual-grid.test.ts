@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { vi, expect, test, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
 
+import { removeTestElements } from './utils';
 import { DualGrid } from '../src/dual-grid';
 
 
@@ -201,7 +202,5 @@ test('dual-grid non-fixed viewport rendering', async () => {
 
 
 afterEach(() => {
-    Array.from(document.body.childNodes).forEach(node => {
-        node.parentNode.removeChild(node);
-    });
+    removeTestElements();
 });

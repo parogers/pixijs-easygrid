@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { vi, expect, test, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
 
+import { removeTestElements } from './utils';
 import { StackedGrid } from '../src/stacked-grid';
 
 
@@ -137,7 +138,5 @@ test('render through viewport', async () => {
 });
 
 afterEach(() => {
-    Array.from(document.body.childNodes).forEach(node => {
-        node.parentNode.removeChild(node);
-    });
+    removeTestElements();
 });
