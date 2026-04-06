@@ -48,6 +48,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 terrain: layer.terrain,
                 autoUpdate: false,
                 debugGridColor: params.debugGridColor,
+                fixedViewport: false,
             });
             grid.onTerrainUpdate = () => {
                 this.updateTopTiles();
@@ -174,7 +175,6 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     update() {
-        console.log(this.viewContainer.x, this.foreground.x);
         super.update();
         this.viewContainer.x = -this.viewport.x;
         this.viewContainer.y = -this.viewport.y;
