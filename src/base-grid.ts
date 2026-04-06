@@ -52,6 +52,7 @@ export class BaseGrid<T> extends PIXI.Container {
      * on screen. Note if either the viewport width or height are set to zero,
      * the entire grid will be rendered. */
     viewport: PIXI.Rectangle = new PIXI.Rectangle();
+    debugGridContainer: PIXI.Container = new PIXI.Container();
     /* Whether to render the underlying grid and what colour */
     debugGridColor: number|null = null;
     /* Used to define the bounds of the viewport mask */
@@ -73,6 +74,7 @@ export class BaseGrid<T> extends PIXI.Container {
         this.viewportMask = params.viewportMask ?? true;
         this.debugGridColor = params.debugGridColor ?? null;
         this.viewContainer.addChild(this.gridContainer);
+        this.viewContainer.addChild(this.debugGridContainer);
         this.viewContainer.addChild(this.foreground);
         this.addChild(this.viewContainer);
         this.maskGraphics = new PIXI.Graphics();
@@ -142,11 +144,11 @@ export class BaseGrid<T> extends PIXI.Container {
         if (this.debugGridColor !== null) {
             if (!this.debugGrid) {
                 this.debugGrid = this.makeDebugGrid(this.debugGridColor);
-                this.foreground.addChild(this.debugGrid);
+                this.debugGridContainer.addChild(this.debugGrid);
             }
         } else {
             if (this.debugGrid) {
-                this.foreground.removeChild(this.debugGrid);
+                this.debugGridContainer.removeChild(this.debugGrid);
                 this.debugGrid = null;
             }
         }
@@ -236,18 +238,22 @@ export class BaseGrid<T> extends PIXI.Container {
         };
     }
 
-    private makeDebugGrid(color: number) {
+    protected makeDebugGrid(color: number, divisions: number = 1) {
         const graphics = new PIXI.Graphics();
         const tw = this.tileSize.width;
         const th = this.tileSize.height;
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {
-                graphics.rect(
-                    tw*col,
-                    th*row,
-                    tw,
-                    th
-                ).stroke({ color: color });
+                for (let subRow = 0; subRow < divisions; subRow++) {
+                    for (let subCol = 0; subCol < divisions; subCol++) {
+                        graphics.rect(
+                            tw*col + subCol*tw/divisions,
+                            th*row + subRow*th/divisions,
+                            tw/divisions,
+                            th/divisions
+                        ).stroke({ color: color });
+                    }
+                }
             }
         }
         return graphics;

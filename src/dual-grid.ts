@@ -19,6 +19,7 @@ export type DualGridParams<T> = {
     terrain?: boolean[][],
     debugGridColor?: number;
     debugDualGridColor?: number;
+    fixedViewport?: number;
 }
 
 
@@ -95,12 +96,16 @@ export class DualGrid<T> extends BaseGrid<T> {
         super({
             autoUpdate: params.autoUpdate,
             debugGridColor: params.debugDualGridColor,
+            fixedViewport: params.fixedViewport,
         });
         this.grid = new Grid({
             spritesheet: params.spritesheet,
             autoUpdate: false,
             debugGridColor: params.debugGridColor,
+            fixedViewport: false,
         })
+        this.grid.x = this.tileSize.width/2;
+        this.grid.y = this.tileSize.height/2;
         this.tileInfo = params.tileInfo;
         this.altTileInfo = params.altTileInfo ?? null;
 
@@ -179,8 +184,13 @@ export class DualGrid<T> extends BaseGrid<T> {
 
     update() {
         super.update();
-        this.foreground.x = -this.viewport.x;
-        this.foreground.y = -this.viewport.y;
+        if (this.fixedViewport) {
+            this.viewContainer.x = -this.viewport.x;
+            this.viewContainer.y = -this.viewport.y;
+        } else {
+            this.viewContainer.x = 0;
+            this.viewContainer.y = 0;
+        }
         this.grid.viewport.x = this.viewport.x - this.tileSize.width/2;
         this.grid.viewport.y = this.viewport.y - this.tileSize.height/2;
         this.grid.viewport.width = this.viewport.width;

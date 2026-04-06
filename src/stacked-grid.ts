@@ -13,6 +13,7 @@ export type StackedGridParams<T> = {
     bottomLayerHeight?: number;
     debugGridColor?: number;
     debugDualGridColor?: number;
+    debugDualGridSubTileColor?: number;
 }
 
 
@@ -35,6 +36,8 @@ export class StackedGrid<T> extends BaseGrid<T> {
         super({
             autoUpdate: params.autoUpdate,
         });
+        this.debugDualGridColor = params.debugDualGridColor ?? null;
+        this.debugDualGridSubTileColor = params.debugDualGridSubTileColor ?? null;
         this.bottomTileInfo = params.bottomTileInfo ?? null;
         this.tileDepths.set(this.bottomTileInfo, 0);
         this.tileHeights.set(this.bottomTileInfo, params.bottomLayerHeight ?? 0);
@@ -44,7 +47,6 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 spritesheet: layer.spritesheet,
                 terrain: layer.terrain,
                 autoUpdate: false,
-                debugDualGridColor: params.debugDualGridColor,
                 debugGridColor: params.debugGridColor,
             });
             grid.onTerrainUpdate = () => {
@@ -172,9 +174,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     update() {
+        console.log(this.viewContainer.x, this.foreground.x);
         super.update();
-        this.foreground.x = -this.viewport.x;
-        this.foreground.y = -this.viewport.y;
+        this.viewContainer.x = -this.viewport.x;
+        this.viewContainer.y = -this.viewport.y;
         for (let layer of this.layers) {
             layer.viewport.x = this.viewport.x;
             layer.viewport.y = this.viewport.y;
@@ -182,5 +185,31 @@ export class StackedGrid<T> extends BaseGrid<T> {
             layer.viewport.height = this.viewport.height;
             layer.update();
         }
+    }
+
+    updateDebugGrid() {
+        if (this.debugDualGridSubTileColor !== null) {
+            if (!this.debugSubTileGrid) {
+                this.debugSubTileGrid = this.makeDebugGrid(this.debugDualGridSubTileColor, 3);
+                this.debugGridContainer.addChild(this.debugSubTileGrid);
+            }
+        } else {
+            if (this.debugSubTileGrid) {
+                this.debugGridContainer.removeChild(this.debugSubTileGrid);
+                this.debugGrid = null;
+            }
+        }
+        if (this.debugDualGridColor !== null) {
+            if (!this.debugDualGrid) {
+                this.debugDualGrid = this.makeDebugGrid(this.debugDualGridColor, 1);
+                this.debugGridContainer.addChild(this.debugDualGrid);
+            }
+        } else {
+            if (this.debugDualGrid) {
+                this.debugGridContainer.removeChild(this.debugDualGrid);
+                this.debugDualGrid = null;
+            }
+        }
+        super.updateDebugGrid();
     }
 }
