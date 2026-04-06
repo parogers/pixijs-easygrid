@@ -25,12 +25,17 @@ export type StackedLayerParams<T> = {
 }
 
 
+export type StackedLayerInfo = {
+    index: number;
+    height: number;
+}
+
+
 export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
-    tileDepths: Map<T|null, number> = new Map();
-    tileHeights: Map<T|null, number> = new Map();
     topTiles: (T|null)[][] = [];
+    layerInfo: Map<T|null, StackedLayerInfo> = new Map();
 
     constructor(params: StackedGridParams<T>) {
         super({
@@ -39,8 +44,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
         this.debugDualGridColor = params.debugDualGridColor ?? null;
         this.debugDualGridSubTileColor = params.debugDualGridSubTileColor ?? null;
         this.bottomTileInfo = params.bottomTileInfo ?? null;
-        this.tileDepths.set(this.bottomTileInfo, 0);
-        this.tileHeights.set(this.bottomTileInfo, params.bottomLayerHeight ?? 0);
+        this.layerInfo.set(this.bottomTileInfo, {
+            index: 0,
+            height: params.bottomLayerHeight ?? 0,
+        });
         for (let layer of params.layers) {
             const grid = new DualGrid<T>({
                 tileInfo: layer.tileInfo,
@@ -55,8 +62,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
             }
             this.layers.push(grid);
             this.gridContainer.addChild(grid);
-            this.tileDepths.set(layer.tileInfo, this.layers.length);
-            this.tileHeights.set(layer.tileInfo, layer.height ?? this.layers.length);
+            this.layerInfo.set(layer.tileInfo, {
+                index: this.layers.length,
+                height: layer.height ?? this.layers.length,
+            })
         }
         this.updateTopTiles();
     }
@@ -93,10 +102,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     /* Returns the tile (info) that appears above the other */
-    getTopTile(tile1: T|null, tile2: T|null): T|null {
-        const depth1 = this.tileDepths.get(tile1) ?? 0;
-        const depth2 = this.tileDepths.get(tile2) ?? 0;
-        if (depth1 > depth2) {
+    getTopTile(tile1: T|null, tile2: T|null, xThirds?: number, yThirds?: number): T|null {
+        const depth1 = this.layerInfo.get(tile1)?.index ?? 0;
+        const depth2 = this.layerInfo.get(tile2)?.index ?? 0;
+        if (depth1 > depth2) { //} (intrudes[yThirds][xThirds] || tile1 !== 'tree')) {
             return tile1;
         }
         return tile2;
@@ -129,11 +138,21 @@ export class StackedGrid<T> extends BaseGrid<T> {
             const offsetTile = this.topTiles[pos.row + yThirds]?.[pos.col + xThirds];
             /* Note since this is a stack of dual-grid layers we always want the
              * top-most visible tile that is intruding in the lower layer. */
-            return this.getTopTile(offsetTile, tile);
+            return this.getTopTile(offsetTile, tile, xThirds+1, yThirds+1);
         }
         const offsetTile1 = this.topTiles[pos.row + yThirds]?.[pos.col];
         const offsetTile2 = this.topTiles[pos.row]?.[pos.col + xThirds];
-        return this.getTopTile(offsetTile1, this.getTopTile(offsetTile2, tile));
+        return this.getTopTile(
+            offsetTile1,
+            this.getTopTile(
+                offsetTile2,
+                tile,
+                xThirds+1,
+                yThirds+1,
+            ),
+            xThirds+1,
+            yThirds+1,
+        );
     }
 
     /*
@@ -155,7 +174,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
         if (!tile) {
             return this.bottomLayerHeight;
         }
-        return this.tileHeights.get(tile);
+        return this.layerInfo.get(tile).height;
     }
 
     getLayer(tileInfo: T): DualGrid|null {
