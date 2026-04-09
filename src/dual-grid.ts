@@ -19,7 +19,7 @@ export type DualGridParams<T> = {
     terrain?: boolean[][],
     debugGridColor?: number;
     debugDualGridColor?: number;
-    fixedViewport?: number;
+    fixedViewport?: boolean;
 }
 
 

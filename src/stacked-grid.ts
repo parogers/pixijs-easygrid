@@ -34,8 +34,13 @@ export type StackedLayerInfo = {
 export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
+    bottomLayerHeight: number = 0;
     topTiles: (T|null)[][] = [];
     layerInfo: Map<T|null, StackedLayerInfo> = new Map();
+    debugDualGrid: PIXI.Graphics|null = null;
+    debugSubTileGrid: PIXI.Graphics|null = null;
+    debugDualGridColor: number|null = null;
+    debugDualGridSubTileColor: number|null = null;
 
     constructor(params: StackedGridParams<T>) {
         super({
@@ -174,10 +179,10 @@ export class StackedGrid<T> extends BaseGrid<T> {
         if (!tile) {
             return this.bottomLayerHeight;
         }
-        return this.layerInfo.get(tile).height;
+        return this.layerInfo.get(tile)?.height ?? 0;
     }
 
-    getLayer(tileInfo: T): DualGrid|null {
+    getLayer(tileInfo: T): DualGrid<T>|null {
         return this.layers.find(layer => layer.tileInfo === tileInfo) ?? null;
     }
 
@@ -215,7 +220,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
         } else {
             if (this.debugSubTileGrid) {
                 this.debugGridContainer.removeChild(this.debugSubTileGrid);
-                this.debugGrid = null;
+                this.debugSubTileGrid = null;
             }
         }
         if (this.debugDualGridColor !== null) {
