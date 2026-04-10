@@ -37,6 +37,8 @@ test('create a grid', async () => {
     expect(grid.cols).toBe(3);
     expect(grid.getTileInfoAt(8, 8)).toBe('dirt-13');
     expect(grid.getTileInfoAt(16, 33)).toBe('dirt-09');
+    expect(grid.gridWidth).toBe(48);
+    expect(grid.gridHeight).toBe(64);
     expect(document.body).toMatchScreenshot('grid-render');
 });
 

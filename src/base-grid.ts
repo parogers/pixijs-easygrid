@@ -122,6 +122,14 @@ export class BaseGrid<T> extends PIXI.Container {
         };
     }
 
+    get gridWidth(): number {
+        return this.cols * this.tileSize.width;
+    }
+
+    get gridHeight(): number {
+        return this.rows * this.tileSize.height;
+    }
+
     private updateMask() {
         if (this.mask) {
             this.maskGraphics.context.destroy();

@@ -67,6 +67,8 @@ test('create a stacked grid', async () => {
     expect(grid.tileSize.height).toBe(16);
     expect(grid.rows).toBe(5);
     expect(grid.cols).toBe(4);
+    expect(grid.gridWidth).toBe(64);
+    expect(grid.gridHeight).toBe(80);
     expect(document.body).toMatchScreenshot('stacked-grid-render');
 });
 

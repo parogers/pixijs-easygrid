@@ -35,6 +35,8 @@ test('create a dual grid', async () => {
     expect(grid.tileSize.height).toBe(16);
     expect(grid.rows).toBe(4);
     expect(grid.cols).toBe(3);
+    expect(grid.gridWidth).toBe(48);
+    expect(grid.gridHeight).toBe(64);
 });
 
 
