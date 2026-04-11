@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script src="noisejs.js"></script>
+        <script type="module">
+            import * as PIXI from 'pixi.js';
+            import * as easygrid from 'pixijs-easygrid';
+            import { mouseToMapPos } from './common.js';
+
+            const div = document.getElementById('app');
+            const app = new PIXI.Application();
+            app.stage.scale.set(5);
+            await app.init({
+                width: 400,
+                height: 300,
+            });
+            div.appendChild(app.canvas);
+
+            const sheet = await PIXI.Assets.load('assets/tiles-mountain.json');
+            sheet.textureSource.scaleMode = 'nearest';
+
+            const grid = new easygrid.DualGrid({
+                tileInfo: true,
+                altTileInfo: false,
+                spritesheet: sheet,
+                hitMap: easygrid.getHitMapFromTileSheet(app.renderer, sheet),
+                terrain: [
+                    [true, true, true, true],
+                    [true, false, false, true],
+                    [true, true, false, false],
+                    [true, true, false, true],
+                ],
+            });
+            const bg = new PIXI.Graphics()
+                .rect(8, 8, grid.gridWidth-16, grid.gridHeight-16)
+                .fill(0x0000ff);
+            app.stage.addChild(bg);
+            app.stage.addChild(grid);
+
+            const marker = new PIXI.Graphics().rect(0, 0, 1, 1).fill(0xff0000);
+            marker.x = -1;
+            marker.y = -1;
+            app.stage.addChild(marker);
+
+            app.canvas.addEventListener('click', event => {
+                const pos = mouseToMapPos(app, grid, event.offsetX, event.offsetY);
+                const tile = grid.getTileInfoAt(pos.x, pos.y);
+                const div = document.getElementById('collision');
+                div.innerText = '' + tile;
+                marker.x = pos.x - 0.5;
+                marker.y = pos.y - 0.5;
+            });
+        </script>
+        <style>
+        dialog {
+            outline: none;
+            border: none;
+            top: 1em;
+            border-radius: 1em;
+            max-width: 40ch;
+        }
+
+        h1 {
+            font-size: 1.1rem;
+        }
+
+        #tile-info {
+            top: 1em;
+            left: 1em;
+            position: absolute;
+            color: white;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Example: collision mask</h1>
+
+        <p>Collision: <span id="collision"></span></p>
+
+        <div id="app">
+        </div>
+    </body>
+</html>

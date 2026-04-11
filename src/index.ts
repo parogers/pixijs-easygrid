@@ -6,3 +6,5 @@ export { DualGrid } from './dual-grid';
 export { StackedGrid } from './stacked-grid';
 
 export { scaleToViewport } from './utils';
+
+export { getHitMapFromTileSheet } from './hit';

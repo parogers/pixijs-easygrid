@@ -5,6 +5,7 @@ import { page } from 'vitest/browser';
 
 import { removeTestElements } from './utils';
 import { DualGrid } from '../src/dual-grid';
+import { getHitMapFromTileSheet } from '../src/hit';
 
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -200,6 +201,37 @@ test('dual-grid non-fixed viewport rendering', async () => {
     grid.foreground.addChild(box);
     grid.update();
     await expect(page.elementLocator(document.body)).toMatchScreenshot('dual-grid-non-fixed-viewport-render');
+});
+
+
+test('collision detection', async () => {
+    const app = new PIXI.Application();
+    await app.init({
+        width: 300,
+        height: 300,
+    });
+    const sheet = await PIXI.Assets.load('tests/assets/tiles-grass.json');
+    document.body.appendChild(app.canvas);
+
+    const grid = new DualGrid({
+        tileInfo: true,
+        altTileInfo: false,
+        spritesheet: sheet,
+        debugDualGridColor: 0,
+        terrain: [
+            [true, true, true],
+            [true, false, true],
+            [true, false, true],
+        ],
+        hitMap: getHitMapFromTileSheet(app.renderer, sheet),
+    });
+    app.stage.scale.set(5);
+    app.stage.addChild(grid);
+    grid.update(0);
+    expect(grid.getTileInfoAt(8, 8)).toBe(true);
+    expect(grid.getTileInfoAt(24, 24)).toBe(false);
+    expect(grid.getTileInfoAt(17, 17)).toBe(true);
+    expect(grid.getTileInfoAt(35, 28)).toBe(true);
 });
 
 

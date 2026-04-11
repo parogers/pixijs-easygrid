@@ -7,6 +7,6 @@ fi
 
 while inotifywait -r -e close_write .
 do
-    sleep 0.5
     make
+    sleep 0.5
 done

@@ -9,6 +9,8 @@ import { BaseGrid, Size } from './base-grid';
 
 import { Grid } from './grid';
 
+import { HitMap } from './hit';
+
 
 export type DualGridParams<T> = {
     tileInfo: T;
@@ -20,6 +22,7 @@ export type DualGridParams<T> = {
     debugGridColor?: number;
     debugDualGridColor?: number;
     fixedViewport?: boolean;
+    hitMap?: HitMap;
 }
 
 
@@ -91,6 +94,7 @@ export class DualGrid<T> extends BaseGrid<T> {
     grid: Grid;
     // Note: this should only be used internally to easygrid
     onTerrainUpdate = () => {};
+    hitMap: HitMap|null;
 
     constructor(params: DualGridParams<T>) {
         super({
@@ -108,6 +112,7 @@ export class DualGrid<T> extends BaseGrid<T> {
         this.grid.y = this.tileSize.height/2;
         this.tileInfo = params.tileInfo;
         this.altTileInfo = params.altTileInfo ?? null;
+        this.hitMap = params.hitMap ?? null;
 
         const tiles = params.tiles ?? Object.keys(params.spritesheet.data.frames).sort();
         if (tiles.length !== TILE_ORDER.length) {
@@ -179,7 +184,17 @@ export class DualGrid<T> extends BaseGrid<T> {
             return null;
         }
         const tileInfo = this.terrain[gridPos.row][gridPos.col] ? this.tileInfo : this.altTileInfo;
-        return tileInfo;
+        if (!this.hitMap) {
+            return tileInfo;
+        }
+        const xp = (x - this.tileSize.width/2)|0;
+        const yp = (y - this.tileSize.height/2)|0;
+        const baseInfo = this.grid.getTileInfoAt(xp, yp);
+        if (!baseInfo) {
+            return null;
+        }
+        const hit = this.hitMap.get(baseInfo);
+        return hit[yp % this.tileSize.height][xp % this.tileSize.width];
     }
 
     update() {
