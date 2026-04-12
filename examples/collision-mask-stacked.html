@@ -22,7 +22,6 @@
             const mountainSheet = await PIXI.Assets.load('assets/tiles-mountain.json');
             const grid = new easygrid.StackedGrid({
                 bottomTileInfo: 'water',
-                debugDualGridColor: 0,
                 layers: [
                     {
                         tileInfo: 'grass',
@@ -65,7 +64,6 @@
                 div.innerText = '' + tile;
                 marker.x = pos.x - 0.5;
                 marker.y = pos.y - 0.5;
-                console.log(pos.x, pos.y);
             });
         </script>
         <style>
