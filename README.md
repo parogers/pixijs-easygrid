@@ -101,6 +101,7 @@ grid.setTerrainAt(10, 15, true); // row, col, terrain value
 // The getCellAt method returns the tileInfo
 const cell = grid.getCellAt(100, 150);
 cell.tileInfo; // eg. "grass" or "dirt"
+grid.getTerrainAt(10, 20); // returns the terrain map (ie boolean grid) interpreted as tile info (eg "grass" or "dirt")
 ```
 
 If you want multiple terrain types (eg forest, grass, water, etc) you'll need to use a StackedGrid instead.
@@ -170,12 +171,12 @@ Stacked grids divide each tile into a 3x3 grid of subtiles, where each subtile m
  * G|G|G
  *
  */
-grid.getTileInfoAt(0, 0); // G
-grid.getTileInfoAt(8, 8); // D
-grid.getSubTileInfoAt(8, 8); // G (because grass intrudes over dirt)
-grid.getSubTileInfoAt(12, 12); // D (middle of the centre dirt tile)
-grid.getSubTileInfoAt(12, 8); // D (top of the centre dirt tile)
-grid.getSubTileInfoAt(7, 12); // G (because grass is above the dirt)
+grid.getTerrainAt(0, 0); // G
+grid.getTerrainAt(8, 8); // D
+grid.getTileInfoAt(8, 8); // G (because grass intrudes over dirt)
+grid.getTileInfoAt(12, 12); // D (middle of the centre dirt tile)
+grid.getTileInfoAt(12, 8); // D (top of the centre dirt tile)
+grid.getTileInfoAt(7, 12); // G (because grass is above the dirt)
 ```
 
 

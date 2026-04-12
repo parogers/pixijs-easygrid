@@ -178,14 +178,36 @@ export class DualGrid<T> extends BaseGrid<T> {
         return tiles;
     }
 
-    getTileInfoAt(x: number, y: number): T|null {
+    /*
+     * Returns the tile info of the dual grid at the given position. For the
+     * center of a grid tile, this will reflect what is rendered on screen.
+     * (eg the middle of a water tile should look like water)
+     *
+     * However as the coordinates approach the edge of the tile, the visual may
+     * change depending on the neighbouring tile (eg water next to dirt will
+     * transition into dirt) but this function will not reflect that.
+     * (use getTileInfoAt if you want something more accurate)
+     */
+    getTerrainAt(x: number, y: number): T|null {
         const gridPos = this.getGridPos(x, y);
         if (!gridPos) {
             return null;
         }
         const tileInfo = this.terrain[gridPos.row][gridPos.col] ? this.tileInfo : this.altTileInfo;
+        return tileInfo;
+    }
+
+    /*
+     * Similar to getTerrainAt, but takes sub-tiles and hit maps into account to
+     * get a more accurate representation of what the tile is/looks like.
+     */
+    getTileInfoAt(x: number, y: number): T|null {
+        const gridPos = this.getGridPos(x, y);
+        if (!gridPos) {
+            return null;
+        }
         if (!this.hitMap) {
-            return tileInfo;
+            return this.getSubTileInfoAt(x, y);
         }
         const xp = (x - this.tileSize.width/2)|0;
         const yp = (y - this.tileSize.height/2)|0;

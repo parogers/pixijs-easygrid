@@ -125,14 +125,14 @@ test('stacked grid tile info', async () => {
     app.stage.addChild(grid);
     app.stage.scale.set(3);
     grid.update(0);
+    expect(grid.getTerrainAt(8, 8)).toBe('grass');
+    expect(grid.getTerrainAt(24, 24)).toBe('tree');
+    expect(grid.getTerrainAt(62, 31)).toBe('grass');
+    expect(grid.getTerrainAt(62, 32)).toBe('water');
     expect(grid.getTileInfoAt(8, 8)).toBe('grass');
-    expect(grid.getTileInfoAt(24, 24)).toBe('tree');
-    expect(grid.getTileInfoAt(62, 31)).toBe('grass');
-    expect(grid.getTileInfoAt(62, 32)).toBe('water');
-    expect(grid.getSubTileInfoAt(8, 8)).toBe('grass');
-    expect(grid.getSubTileInfoAt(8, 12)).toBe('tree');
-    expect(grid.getSubTileInfoAt(62, 32)).toBe('grass');
-    expect(grid.getSubTileInfoAt(62, 40)).toBe('water');
+    expect(grid.getTileInfoAt(8, 12)).toBe('tree');
+    expect(grid.getTileInfoAt(62, 32)).toBe('grass');
+    expect(grid.getTileInfoAt(62, 40)).toBe('water');
 });
 
 test('configure layer heights', async () => {
@@ -295,13 +295,13 @@ test('collision map', async () => {
     app.stage.addChild(grid);
     app.stage.scale.set(3);
     grid.update(0);
-    expect(grid.getSubTileInfoAt(22, 22)).toBe('mountain');
-    expect(grid.getSubTileInfoAt(24, 35)).toBe('mountain');
-    expect(grid.getSubTileInfoAt(24, 42)).toBe('grass');
-    expect(grid.getSubTileInfoAt(40, 22)).toBe('grass');
-    expect(grid.getSubTileInfoAt(22, 22)).toBe('mountain');
-    expect(grid.getSubTileInfoAt(40, 40)).toBe('water');
-    expect(grid.getSubTileInfoAt(33, 21)).toBe('mountain');
+    expect(grid.getTileInfoAt(22, 22)).toBe('mountain');
+    expect(grid.getTileInfoAt(24, 35)).toBe('mountain');
+    expect(grid.getTileInfoAt(24, 42)).toBe('grass');
+    expect(grid.getTileInfoAt(40, 22)).toBe('grass');
+    expect(grid.getTileInfoAt(22, 22)).toBe('mountain');
+    expect(grid.getTileInfoAt(40, 40)).toBe('water');
+    expect(grid.getTileInfoAt(33, 21)).toBe('mountain');
 });
 
 

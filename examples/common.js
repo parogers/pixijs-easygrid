@@ -84,13 +84,18 @@ export function setupMarker(app, grid, elementID) {
 
                 const div = document.getElementById(elementID);
                 if (div) {
-                    div.innerText = `Tile info: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
+                    let text = `Tile info: ${cell.tileInfo || 'NA'} (${cell.row}, ${cell.col})`;
+                    if (grid.getTerrainAt) {
+                        const tile = grid.getTerrainAt(pos.x, pos.y);
+                        text += `\nTerrain tile: ${tile}`;
+                    }
                     if (grid.getStackAt) {
                         const stack = grid.getStackAt(pos.x, pos.y);
                         const subtile = grid.getSubTileInfoAt(pos.x, pos.y);
-                        div.innerText += '\nSub-tile info: ' + subtile;
-                        div.innerText += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
+                        text += '\nSub-tile info: ' + subtile;
+                        text += '\nLayers: ' + stack.map((value) => value || 'NA').join(', ');
                     }
+                    div.innerText = text;
                 }
             }
         }

@@ -63,15 +63,15 @@ test('gets tile info', async () => {
     app.stage.scale.set(5);
     app.stage.addChild(grid);
     grid.update(0);
-    expect(grid.getTileInfoAt(-1, -1)).toBe(null);
-    expect(grid.getTileInfoAt(0, 0)).toBe('dirt');
+    expect(grid.getTerrainAt(-1, -1)).toBe(null);
+    expect(grid.getTerrainAt(0, 0)).toBe('dirt');
+    expect(grid.getTerrainAt(8, 8)).toBe('dirt');
+    expect(grid.getTerrainAt(15, 15)).toBe('dirt');
+    expect(grid.getTerrainAt(16, 16)).toBe('water');
     expect(grid.getTileInfoAt(8, 8)).toBe('dirt');
-    expect(grid.getTileInfoAt(15, 15)).toBe('dirt');
-    expect(grid.getTileInfoAt(16, 16)).toBe('water');
-    expect(grid.getSubTileInfoAt(8, 8)).toBe('dirt');
-    expect(grid.getSubTileInfoAt(17, 17)).toBe('dirt');
-    expect(grid.getSubTileInfoAt(31, 31)).toBe('dirt');
-    expect(grid.getSubTileInfoAt(24, 24)).toBe('water');
+    expect(grid.getTileInfoAt(17, 17)).toBe('dirt');
+    expect(grid.getTileInfoAt(31, 31)).toBe('dirt');
+    expect(grid.getTileInfoAt(24, 24)).toBe('water');
     expect(grid.getCellAt(0, 0)).toStrictEqual({
         tileInfo: 'dirt',
         row: 0,

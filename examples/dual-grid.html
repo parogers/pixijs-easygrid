@@ -20,13 +20,14 @@
             const terrain = generateTerrain(100, 100);
             const grid = new easygrid.DualGrid({
                 tileInfo: 'grass',
+                altTileInfo: 'dirt',
                 spritesheet: spritesheet,
                 terrain: terrain,
             });
-            grid.viewport.x = 50;
-            grid.viewport.y = 50;
+            grid.viewport.x = 150;
+            grid.viewport.y = 150;
             app.stage.addChild(grid);
-            app.stage.scale.set(1.5);
+            app.stage.scale.set(2);
 
             /* Let the user click around the map and change the terrain. When
              * they click it toggles the terrain type under the mouse, then if
@@ -85,6 +86,9 @@
             <li>Control-click to toggle the value of the terrain (grass vs dirt)</li>
         </ul>
         <p>Average FPS: <span id="fps"></span></p>
-        <p>Selected tile: <span id="tile-info"></span></p>
+        <pre id="tile-info">
+
+
+</pre>
     </body>
 </html>

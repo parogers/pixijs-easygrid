@@ -74,6 +74,16 @@ export class StackedGrid<T> extends BaseGrid<T> {
         }
     }
 
+    getTerrainAt(x: number, y: number): T|null {
+        for (let n = this.layers.length-1; n >= 0; n--) {
+            const tileInfo = this.layers[n].getTerrainAt(x, y);
+            if (tileInfo) {
+                return tileInfo;
+            }
+        }
+        return this.bottomTileInfo;
+    }
+
     getTileInfoAt(x: number, y: number): T|null {
         for (let n = this.layers.length-1; n >= 0; n--) {
             const tileInfo = this.layers[n].getTileInfoAt(x, y);
@@ -109,7 +119,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     getHeightAt(x: number, y: number): number {
-        const tile = this.getSubTileInfoAt(x, y);
+        const tile = this.getTileInfoAt(x, y);
         if (!tile) {
             return this.bottomLayerHeight;
         }
