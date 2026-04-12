@@ -254,6 +254,57 @@ test('render through viewport', async () => {
     expect(document.body).toMatchScreenshot('stacked-grid-viewport-render');
 });
 
+
+test.only('collision map', async () => {
+    const app = new PIXI.Application();
+    await app.init({
+        width: 300,
+        height: 300,
+    });
+    document.body.appendChild(app.canvas);
+
+    const grassSheet = await PIXI.Assets.load('tests/assets/tiles-grass.json');
+    const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
+    const mountainSheet = await PIXI.Assets.load('tests/assets/tiles-mountain.json');
+
+    const grid = new StackedGrid({
+        bottomTileInfo: 'water',
+        layers: [
+            {
+                tileInfo: 'grass',
+                spritesheet: grassSheet,
+                terrain: [
+                    [1, 1, 1, 1],
+                    [1, 1, 1, 1],
+                    [1, 1, 0, 1],
+                    [1, 0, 0, 1],
+                ],
+            },
+            {
+                tileInfo: 'mountain',
+                spritesheet: mountainSheet,
+                terrain: [
+                    [1, 1, 0, 0],
+                    [1, 1, 0, 0],
+                    [1, 0, 0, 0],
+                    [1, 0, 0, 0],
+                ],
+            },
+        ],
+    });
+    app.stage.addChild(grid);
+    app.stage.scale.set(3);
+    grid.update(0);
+    expect(grid.getSubTileInfoAt(22, 22)).toBe('mountain');
+    expect(grid.getSubTileInfoAt(24, 35)).toBe('mountain');
+    expect(grid.getSubTileInfoAt(24, 42)).toBe('grass');
+    expect(grid.getSubTileInfoAt(40, 22)).toBe('grass');
+    expect(grid.getSubTileInfoAt(22, 22)).toBe('mountain');
+    expect(grid.getSubTileInfoAt(40, 40)).toBe('water');
+    expect(grid.getSubTileInfoAt(33, 21)).toBe('mountain');
+});
+
+
 afterEach(() => {
     removeTestElements();
 });

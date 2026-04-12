@@ -5,6 +5,8 @@ import { BaseGrid, Size } from './base-grid';
 
 import { DualGrid } from './dual-grid';
 
+import { HitMap } from './hit';
+
 
 export type StackedGridParams<T> = {
     layers: StackedLayerParams<T>[];
@@ -22,6 +24,7 @@ export type StackedLayerParams<T> = {
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
     height?: number;
+    hitMap?: HitMap;
 }
 
 
@@ -61,6 +64,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 autoUpdate: false,
                 debugGridColor: params.debugGridColor,
                 fixedViewport: false,
+                hitMap: layer.hitMap,
             });
             grid.onTerrainUpdate = () => {
                 this.updateTopTiles();
@@ -90,8 +94,8 @@ export class StackedGrid<T> extends BaseGrid<T> {
             this.topTiles.push([]);
             for (let col = 0; col < this.cols; col++) {
                 const tile = getTileInfo(
-                    col*this.tileSize.width + 1,
-                    row*this.tileSize.height + 1
+                    col*this.tileSize.width + this.tileSize.width/2,
+                    row*this.tileSize.height + this.tileSize.height/2
                 );
                 this.topTiles[this.topTiles.length-1].push(tile);
             }
@@ -99,11 +103,19 @@ export class StackedGrid<T> extends BaseGrid<T> {
     }
 
     getTileInfoAt(x: number, y: number): T|null {
-        const pos = this.getGridPos(x, y);
-        if (!pos) {
-            return null;
+        for (let n = this.layers.length-1; n >= 0; n--) {
+            const tileInfo = this.layers[n].getTileInfoAt(x, y);
+            if (tileInfo) {
+                return tileInfo;
+            }
         }
-        return this.topTiles[pos.row][pos.col];
+        return this.bottomTileInfo;
+
+        // const pos = this.getGridPos(x, y);
+        // if (!pos) {
+        //     return null;
+        // }
+        // return this.topTiles[pos.row][pos.col];
     }
 
     /* Returns the tile (info) that appears above the other */

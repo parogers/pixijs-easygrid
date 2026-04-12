@@ -7,6 +7,8 @@
             import * as easygrid from 'pixijs-easygrid';
             import { mouseToMapPos } from './common.js';
 
+            PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
+
             const div = document.getElementById('app');
             const app = new PIXI.Application();
             app.stage.scale.set(5);
@@ -16,19 +18,33 @@
             });
             div.appendChild(app.canvas);
 
-            const sheet = await PIXI.Assets.load('assets/tiles-mountain.json');
-            sheet.textureSource.scaleMode = 'nearest';
-
-            const grid = new easygrid.DualGrid({
-                tileInfo: true,
-                altTileInfo: false,
-                spritesheet: sheet,
-                hitMap: easygrid.getHitMapFromTileSheet(app.renderer, sheet),
-                terrain: [
-                    [true, true, true, true],
-                    [true, false, false, true],
-                    [true, true, false, false],
-                    [true, true, false, true],
+            const grassSheet = await PIXI.Assets.load('assets/tiles-grass.json');
+            const mountainSheet = await PIXI.Assets.load('assets/tiles-mountain.json');
+            const grid = new easygrid.StackedGrid({
+                bottomTileInfo: 'water',
+                debugDualGridColor: 0,
+                layers: [
+                    {
+                        tileInfo: 'grass',
+                        spritesheet: grassSheet,
+                        terrain: [
+                            [1, 1, 1, 1],
+                            [1, 1, 1, 1],
+                            [1, 1, 0, 1],
+                            [1, 0, 0, 1],
+                        ],
+                    },
+                    {
+                        tileInfo: 'mountain',
+                        spritesheet: mountainSheet,
+                        terrain: [
+                            [1, 1, 0, 0],
+                            [1, 1, 0, 0],
+                            [1, 0, 0, 0],
+                            [1, 0, 0, 0],
+                        ],
+                        hitMap: easygrid.getHitMapFromTileSheet(app.renderer, mountainSheet),
+                    },
                 ],
             });
             const bg = new PIXI.Graphics()
@@ -49,31 +65,19 @@
                 div.innerText = '' + tile;
                 marker.x = pos.x - 0.5;
                 marker.y = pos.y - 0.5;
+                console.log(pos.x, pos.y);
             });
         </script>
         <style>
-        dialog {
-            outline: none;
-            border: none;
-            top: 1em;
-            border-radius: 1em;
-            max-width: 40ch;
-        }
-
         h1 {
             font-size: 1.1rem;
-        }
-
-        #tile-info {
-            top: 1em;
-            left: 1em;
-            position: absolute;
-            color: white;
         }
         </style>
     </head>
     <body>
-        <h1>Example: collision mask (dual grid)</h1>
+        <h1>Example: collision mask (stacked grid)</h1>
+
+        <p>In this example the mountain layer has a collision mask set, which makes for more accurate detection, while the other layers don't.</p>
 
         <p>Collision: <span id="collision"></span></p>
 
