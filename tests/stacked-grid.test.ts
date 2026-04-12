@@ -255,7 +255,7 @@ test('render through viewport', async () => {
 });
 
 
-test.only('collision map', async () => {
+test('collision map', async () => {
     const app = new PIXI.Application();
     await app.init({
         width: 300,

@@ -68,6 +68,10 @@ test('gets tile info', async () => {
     expect(grid.getTileInfoAt(8, 8)).toBe('dirt');
     expect(grid.getTileInfoAt(15, 15)).toBe('dirt');
     expect(grid.getTileInfoAt(16, 16)).toBe('water');
+    expect(grid.getSubTileInfoAt(8, 8)).toBe('dirt');
+    expect(grid.getSubTileInfoAt(17, 17)).toBe('dirt');
+    expect(grid.getSubTileInfoAt(31, 31)).toBe('dirt');
+    expect(grid.getSubTileInfoAt(24, 24)).toBe('water');
     expect(grid.getCellAt(0, 0)).toStrictEqual({
         tileInfo: 'dirt',
         row: 0,

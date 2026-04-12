@@ -128,48 +128,14 @@ export class StackedGrid<T> extends BaseGrid<T> {
         return tile2;
     }
 
-    /*
-     * In (dual) stacked grids, each tile can be divided into a 3x3 grid of
-     * subtiles that more accurately represent what the tile looks like on
-     * screen. That's because neighbouring tiles can "intrude" into a neighbour
-     * tile because of dual-grid rendering.
-     *
-     * Eg a water tile might be bordered by dirt on all sides making
-     * the center of that tile (subtile 1, 1) fully water, but the surrounding
-     * subtiles (eg subtile 0, 1) look like dirt.
-     */
     getSubTileInfoAt(x: number, y: number): T|null {
-        const pos = this.getGridPos(x, y);
-        if (!pos) {
-            return null;
+        for (let n = this.layers.length-1; n >= 0; n--) {
+            const tile = this.layers[n].getSubTileInfoAt(x, y);
+            if (tile) {
+                return tile;
+            }
         }
-        const tile = this.topTiles[pos.row][pos.col];
-        const tw = this.tileSize.width;
-        const th = this.tileSize.height;
-        const xOffset = x % tw;
-        const yOffset = y % th;
-        // Which thirds subtile we are targeting (ranging -1, 0, 1)
-        const xThirds = ((xOffset / (tw/3)) | 0) - 1;
-        const yThirds = ((yOffset / (th/3)) | 0) - 1;
-        if (xThirds === 0 || yThirds === 0) {
-            const offsetTile = this.topTiles[pos.row + yThirds]?.[pos.col + xThirds];
-            /* Note since this is a stack of dual-grid layers we always want the
-             * top-most visible tile that is intruding in the lower layer. */
-            return this.getTopTile(offsetTile, tile, xThirds+1, yThirds+1);
-        }
-        const offsetTile1 = this.topTiles[pos.row + yThirds]?.[pos.col];
-        const offsetTile2 = this.topTiles[pos.row]?.[pos.col + xThirds];
-        return this.getTopTile(
-            offsetTile1,
-            this.getTopTile(
-                offsetTile2,
-                tile,
-                xThirds+1,
-                yThirds+1,
-            ),
-            xThirds+1,
-            yThirds+1,
-        );
+        return this.bottomTileInfo;
     }
 
     /*
