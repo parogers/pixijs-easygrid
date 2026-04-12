@@ -38,7 +38,6 @@ export class StackedGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
     bottomLayerHeight: number = 0;
-    topTiles: (T|null)[][] = [];
     layerInfo: Map<T|null, StackedLayerInfo> = new Map();
     debugDualGrid: PIXI.Graphics|null = null;
     debugSubTileGrid: PIXI.Graphics|null = null;
@@ -66,39 +65,12 @@ export class StackedGrid<T> extends BaseGrid<T> {
                 fixedViewport: false,
                 hitMap: layer.hitMap,
             });
-            grid.onTerrainUpdate = () => {
-                this.updateTopTiles();
-            }
             this.layers.push(grid);
             this.gridContainer.addChild(grid);
             this.layerInfo.set(layer.tileInfo, {
                 index: this.layers.length,
                 height: layer.height ?? this.layers.length,
             })
-        }
-        this.updateTopTiles();
-    }
-
-    updateTopTiles() {
-        const getTileInfo = (x: number, y: number): T|null => {
-            for (let n = this.layers.length-1; n >= 0; n--) {
-                const tileInfo = this.layers[n].getTileInfoAt(x, y);
-                if (tileInfo) {
-                    return tileInfo;
-                }
-            }
-            return this.bottomTileInfo;
-        }
-        this.topTiles = [];
-        for (let row = 0; row < this.rows; row++) {
-            this.topTiles.push([]);
-            for (let col = 0; col < this.cols; col++) {
-                const tile = getTileInfo(
-                    col*this.tileSize.width + this.tileSize.width/2,
-                    row*this.tileSize.height + this.tileSize.height/2
-                );
-                this.topTiles[this.topTiles.length-1].push(tile);
-            }
         }
     }
 
@@ -110,22 +82,6 @@ export class StackedGrid<T> extends BaseGrid<T> {
             }
         }
         return this.bottomTileInfo;
-
-        // const pos = this.getGridPos(x, y);
-        // if (!pos) {
-        //     return null;
-        // }
-        // return this.topTiles[pos.row][pos.col];
-    }
-
-    /* Returns the tile (info) that appears above the other */
-    getTopTile(tile1: T|null, tile2: T|null, xThirds?: number, yThirds?: number): T|null {
-        const depth1 = this.layerInfo.get(tile1)?.index ?? 0;
-        const depth2 = this.layerInfo.get(tile2)?.index ?? 0;
-        if (depth1 > depth2) { //} (intrudes[yThirds][xThirds] || tile1 !== 'tree')) {
-            return tile1;
-        }
-        return tile2;
     }
 
     getSubTileInfoAt(x: number, y: number): T|null {
