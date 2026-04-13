@@ -61,6 +61,7 @@ function makeEmpty(rows: number, cols: number) {
     return tiles;
 }
 
+
 /*
  * A dual-grid that renders based on a simple boolean terrain map. A true value
  * indicates the presence of a terrain type (given by tileInfo), and a false
@@ -202,10 +203,6 @@ export class DualGrid<T> extends BaseGrid<T> {
      * get a more accurate representation of what the tile is/looks like.
      */
     getTileInfoAt(x: number, y: number): T|null {
-        const gridPos = this.getGridPos(x, y);
-        if (!gridPos) {
-            return null;
-        }
         if (!this.hitMap) {
             return this.getSubTileInfoAt(x, y);
         }
