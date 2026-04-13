@@ -5,8 +5,9 @@ if ! cd ./examples/assets/; then
     exit 1
 fi
 
+make
 while inotifywait -r -e close_write .
 do
-    make
     sleep 0.5
+    make
 done
