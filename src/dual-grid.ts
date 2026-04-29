@@ -213,6 +213,9 @@ export class DualGrid<T> extends BaseGrid<T> {
             return null;
         }
         const hit = this.hitMap.get(baseInfo);
+        if (!hit) {
+            return this.altTileInfo;
+        }
         return hit[yp % this.tileSize.height][xp % this.tileSize.width] ? this.tileInfo : this.altTileInfo;
     }
 

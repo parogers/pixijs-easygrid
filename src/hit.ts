@@ -1,4 +1,5 @@
 
+import * as PIXI from 'pixi.js';
 
 export type HitMap = Map<string, boolean[][]>;
 
@@ -9,10 +10,14 @@ export type HitMapParams = {
 }
 
 
-export function getHitMapFromTexture(renderer, texture, params: HitMapParams) {
+export function getHitMapFromTexture(
+    renderer: PIXI.Renderer,
+    texture: PIXI.Texture,
+    params: HitMapParams,
+) {
     const threshold = params.opacityThreshold ?? 1;
     const pixels = renderer.extract.pixels(texture); // rgba packed, row first
-    const map = [];
+    const map: boolean[][] = [];
     let pos = 0;
     for (let y = 0; y < pixels.height; y++) {
         map.push([]);
@@ -26,7 +31,11 @@ export function getHitMapFromTexture(renderer, texture, params: HitMapParams) {
 }
 
 
-export function getHitMapFromTileSheet(renderer, spritesheet, params: HitMapParams = {}) {
+export function getHitMapFromTileSheet(
+    renderer: PIXI.Renderer,
+    spritesheet: PIXI.Spritesheet,
+    params: HitMapParams = {},
+) {
     return new Map(Object.keys(spritesheet.textures).map(name => {
         return [
             name,
