@@ -20,14 +20,23 @@ export function scaleToViewport(
         width: number;
         height: number;
     },
-    renderSize?: {
+    renderArg?: {
         width: number;
         height: number;
-    }
+    }|PIXI.Renderer
 ) {
-    function getRenderer(): PIXI.Renderer|null {
+    function getRendererSize(): {width: number, height: number}|null {
+        if (renderArg) {
+            return {
+                width: renderArg.width,
+                height: renderArg.height,
+            };
+        }
         if ('renderer' in target) {
-            return target.renderer;
+            return {
+                width: target.renderer.width,
+                height: target.renderer.height,
+            };
         }
         return null;
     }
@@ -37,15 +46,9 @@ export function scaleToViewport(
         }
         return target;
     }
+    const renderSize = getRendererSize();
     if (!renderSize) {
-        const renderer = getRenderer();
-        if (!renderer) {
-            throw Error('must either provide app as first argument, or renderSize as third');
-        }
-        renderSize = {
-            width: renderer.width,
-            height: renderer.height,
-        };
+        throw Error('must either provide PIXI.Application as first argument, or PIXI.Renderer as third argument, or render width/height as third argument');
     }
     const stage = getStage();
     const scale = Math.min(
