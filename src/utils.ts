@@ -14,7 +14,27 @@ import * as PIXI from 'pixi.js'
  * If renderSize is defined, this function will use that size rather than the
  * canvas size.
  */
-export function scaleToViewport(
+function scaleToViewport(
+    app: PIXI.Application,
+    viewportSize: {
+        width: number;
+        height: number;
+    },
+): void;
+
+function scaleToViewport(
+    container: PIXI.Container,
+    viewportSize: {
+        width: number;
+        height: number;
+    },
+    renderArg: {
+        width: number;
+        height: number;
+    }|PIXI.Renderer
+): void;
+
+function scaleToViewport(
     target: PIXI.Application|PIXI.Container,
     viewportSize: {
         width: number;
@@ -24,7 +44,8 @@ export function scaleToViewport(
         width: number;
         height: number;
     }|PIXI.Renderer
-) {
+): void
+{
     function getRendererSize(): {width: number, height: number}|null {
         if (renderArg) {
             return {
@@ -48,7 +69,7 @@ export function scaleToViewport(
     }
     const renderSize = getRendererSize();
     if (!renderSize) {
-        throw Error('must either provide PIXI.Application as first argument, or PIXI.Renderer as third argument, or render width/height as third argument');
+        throw Error('cannot determine render size');
     }
     const stage = getStage();
     const scale = Math.min(
@@ -59,3 +80,5 @@ export function scaleToViewport(
     stage.x = renderSize.width / 2 - scale*viewportSize.width / 2;
     stage.y = renderSize.height / 2 - scale*viewportSize.height / 2;
 }
+
+export { scaleToViewport };
