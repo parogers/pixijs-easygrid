@@ -15,7 +15,7 @@ import * as PIXI from 'pixi.js'
  * canvas size.
  */
 export function scaleToViewport(
-    app: PIXI.Application,
+    target: PIXI.Application|PIXI.Container,
     viewportSize: {
         width: number;
         height: number;
@@ -25,17 +25,34 @@ export function scaleToViewport(
         height: number;
     }
 ) {
+    function getRenderer(): PIXI.Renderer|null {
+        if ('renderer' in target) {
+            return target.renderer;
+        }
+        return null;
+    }
+    function getStage(): PIXI.Container {
+        if ('stage' in target) {
+            return target.stage;
+        }
+        return target;
+    }
     if (!renderSize) {
+        const renderer = getRenderer();
+        if (!renderer) {
+            throw Error('must either provide app as first argument, or renderSize as third');
+        }
         renderSize = {
-            width: app.renderer.width,
-            height: app.renderer.height,
+            width: renderer.width,
+            height: renderer.height,
         };
     }
+    const stage = getStage();
     const scale = Math.min(
         renderSize.width / viewportSize.width,
         renderSize.height / viewportSize.height
     );
-    app.stage.scale.set(scale);
-    app.stage.x = renderSize.width / 2 - scale*viewportSize.width / 2;
-    app.stage.y = renderSize.height / 2 - scale*viewportSize.height / 2;
+    stage.scale.set(scale);
+    stage.x = renderSize.width / 2 - scale*viewportSize.width / 2;
+    stage.y = renderSize.height / 2 - scale*viewportSize.height / 2;
 }
