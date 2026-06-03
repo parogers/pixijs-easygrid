@@ -9,7 +9,7 @@ import { BaseGrid, Size } from './base-grid';
 
 import { Grid } from './grid';
 
-import { HitMap } from './hit';
+import { HitMapStore } from './hit';
 
 
 export type DualGridParams<T> = {
@@ -22,7 +22,7 @@ export type DualGridParams<T> = {
     debugGridColor?: number;
     debugDualGridColor?: number;
     fixedViewport?: boolean;
-    hitMap?: HitMap;
+    hitMap?: HitMapStore;
 }
 
 
@@ -95,7 +95,7 @@ export class DualGrid<T> extends BaseGrid<T> {
     grid: Grid;
     // Note: this should only be used internally to easygrid
     onTerrainUpdate = () => {};
-    hitMap: HitMap|null;
+    hitMap: HitMapStore|null;
 
     constructor(params: DualGridParams<T>) {
         super({
@@ -216,7 +216,7 @@ export class DualGrid<T> extends BaseGrid<T> {
         if (!hit) {
             return this.altTileInfo;
         }
-        return hit[yp % this.tileSize.height][xp % this.tileSize.width] ? this.tileInfo : this.altTileInfo;
+        return hit(xp % this.tileSize.width, yp % this.tileSize.height) ? this.tileInfo : this.altTileInfo;
     }
 
     /*

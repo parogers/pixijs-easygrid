@@ -1,7 +1,8 @@
 
 import * as PIXI from 'pixi.js';
 
-export type HitMap = Map<string, boolean[][]>;
+export type HitMap = (x: number, y: number) => boolean;
+export type HitMapStore = Map<string, HitMap>;
 
 
 export type HitMapParams = {
@@ -10,12 +11,12 @@ export type HitMapParams = {
 }
 
 
-export function getHitMapFromTexture(
+function makeHitGridFromTexture(
     renderer: PIXI.Renderer,
     texture: PIXI.Texture,
-    params: HitMapParams,
-) {
-    const threshold = params.opacityThreshold ?? 1;
+    threshold: number,
+): boolean[][]
+{
     const pixels = renderer.extract.pixels(texture); // rgba packed, row first
     const map: boolean[][] = [];
     let pos = 0;
@@ -31,11 +32,24 @@ export function getHitMapFromTexture(
 }
 
 
+export function getHitMapFromTexture(
+    renderer: PIXI.Renderer,
+    texture: PIXI.Texture,
+    params: HitMapParams,
+): HitMap {
+    const threshold = params.opacityThreshold ?? 1;
+    const grid = makeHitGridFromTexture(renderer, texture, threshold);
+    return (x: number, y: number) => {
+        return grid[y][x];
+    }
+}
+
+
 export function getHitMapFromTileSheet(
     renderer: PIXI.Renderer,
     spritesheet: PIXI.Spritesheet,
     params: HitMapParams = {},
-) {
+): HitMapStore {
     return new Map(Object.keys(spritesheet.textures).map(name => {
         return [
             name,

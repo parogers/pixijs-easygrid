@@ -5,7 +5,7 @@ import { BaseGrid, Size } from './base-grid';
 
 import { DualGrid } from './dual-grid';
 
-import { HitMap } from './hit';
+import { HitMapStore } from './hit';
 
 
 export type StackedGridParams<T> = {
@@ -24,7 +24,7 @@ export type StackedLayerParams<T> = {
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
     height?: number;
-    hitMap?: HitMap;
+    hitMap?: HitMapStore;
 }
 
 

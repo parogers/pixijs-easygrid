@@ -7,6 +7,9 @@ import {
     GridRange,
 } from './base-grid';
 
+import { HitMapStore } from './hit';
+
+
 type GridParams = {
     /* The spritesheet to draw from when rendering tiles. If not specified, the
      * grid will look up tiles in the asset cache. (or you can use a custom
@@ -30,6 +33,7 @@ type GridParams = {
     /* The function to use when looking up textures to render */
     findTexture?: FindTextureFunc;
     debugGridColor?: number;
+    hitMap?: HitMapStore;
 }
 
 export type FindTextureFunc = (name: string) => PIXI.Texture|null;
@@ -81,6 +85,7 @@ export class Grid extends BaseGrid<string> {
     private graphics: PIXI.Graphics;
     private tilesDirty: boolean = false;
     private spritesheet: PIXI.Spritesheet|null;
+    private hitMap: HitMapStore|null = null;
 
     constructor(params: GridParams) {
         super({
@@ -90,6 +95,7 @@ export class Grid extends BaseGrid<string> {
             fixedViewport: params.fixedViewport,
         });
         this.tilesDirty = true;
+        this.hitMap = params.hitMap ?? null;
         this.spritesheet = params.spritesheet ?? null;
         this.graphics = new PIXI.Graphics();
         this.gridContainer.addChild(this.graphics);
@@ -251,5 +257,19 @@ export class Grid extends BaseGrid<string> {
             return null;
         }
         return this.tiles[pos.row][pos.col];
+    }
+
+    getSolidAt(x: number, y: number): boolean {
+        const info = this.getTileInfoAt(x, y);
+        if (!this.hitMap || !info) {
+            return !!info;
+        }
+        const hit = this.hitMap.get(info);
+        if (!hit) {
+            return true;
+        }
+        const xp = (Math.round(x)|0) % this.tileSize.width;
+        const yp = (Math.round(y)|0) % this.tileSize.height;
+        return hit(xp, yp);
     }
 }
