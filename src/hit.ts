@@ -1,7 +1,7 @@
 
 import * as PIXI from 'pixi.js';
 
-export type HitMap = (x: number, y: number) => boolean;
+export type HitMap = (x: number, y: number, tileWidth: number, tileHeight: number) => boolean;
 export type HitMapStore = Map<string, HitMap>;
 
 
@@ -32,6 +32,40 @@ function makeHitGridFromTexture(
 }
 
 
+/*
+ * Creates a hit detector based on a diagonal line.
+ *
+ * * upDown - when looking at the tile, from left to right, whether the slope
+ *   points "up" or "down".
+ * * aboveBelow - whether the hit region (eg solid area) is "above" or "below"
+ *   the diagonal line.
+ */
+export function makeDiagonalHitMap(upDown: string, aboveBelow: string): HitMap {
+    if (upDown === 'down' && aboveBelow === 'below') {
+        return (x: number, y: number, w: number, h: number) => {
+            const slope = h/w;
+            return y >= slope*x;
+        };
+    } else if (upDown === 'down' && aboveBelow === 'above') {
+        return (x: number, y: number, w: number, h: number) => {
+            const slope = h/w;
+            return y <= slope*x;
+        };
+    } else if (upDown === 'up' && aboveBelow === 'below') {
+        return (x: number, y: number, w: number, h: number) => {
+            const slope = -h/w;
+            return y >= slope*x + h;
+        };
+    } else if (upDown === 'up' && aboveBelow === 'above') {
+        return (x: number, y: number, w: number, h: number) => {
+            const slope = -h/w;
+            return y <= slope*x + h;
+        };
+    }
+    throw Error(`unknown diagonal combination: ${upDown} and ${aboveBelow}`);
+}
+
+
 export function getHitMapFromTexture(
     renderer: PIXI.Renderer,
     texture: PIXI.Texture,
@@ -39,7 +73,7 @@ export function getHitMapFromTexture(
 ): HitMap {
     const threshold = params.opacityThreshold ?? 1;
     const grid = makeHitGridFromTexture(renderer, texture, threshold);
-    return (x: number, y: number) => {
+    return (x: number, y: number, w: number, h: number) => {
         return grid[y][x];
     }
 }

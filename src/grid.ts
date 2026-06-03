@@ -268,8 +268,8 @@ export class Grid extends BaseGrid<string> {
         if (!hit) {
             return true;
         }
-        const xp = (Math.round(x)|0) % this.tileSize.width;
-        const yp = (Math.round(y)|0) % this.tileSize.height;
-        return hit(xp, yp);
+        const xp = (x|0) % this.tileSize.width;
+        const yp = (y|0) % this.tileSize.height;
+        return hit(xp, yp, this.tileSize.width, this.tileSize.height);
     }
 }

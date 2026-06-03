@@ -7,4 +7,4 @@ export { StackedGrid } from './stacked-grid';
 
 export { scaleToViewport } from './utils';
 
-export { getHitMapFromTileSheet } from './hit';
+export { getHitMapFromTileSheet, makeDiagonalHitMap } from './hit';
