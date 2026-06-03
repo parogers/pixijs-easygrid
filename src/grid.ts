@@ -56,7 +56,14 @@ function getTileSize(params: GridParams) {
         };
     }
     if (params.tileSize) {
-        return params.tileSize;
+        if (
+            typeof params.tileSize === 'object' &&
+            params.tileSize.width &&
+            params.tileSize.height
+        ) {
+            return params.tileSize;
+        }
+        throw TypeError('invalid tile size: ' + params.tileSize);
     }
     if (params.spritesheet) {
         return guessTileSize(params.spritesheet);
