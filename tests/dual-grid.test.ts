@@ -223,9 +223,9 @@ test('collision detection', async () => {
         spritesheet: sheet,
         debugDualGridColor: 0,
         terrain: [
-            [true, true, true],
-            [true, false, true],
-            [true, false, true],
+            [true, true, true, true, true],
+            [true, false, true, true, true],
+            [true, false, true, true, true],
         ],
         hitMap: getHitMapFromTileSheet(app.renderer, sheet),
     });
@@ -236,6 +236,7 @@ test('collision detection', async () => {
     expect(grid.getTileInfoAt(24, 24)).toBe(false);
     expect(grid.getTileInfoAt(17, 17)).toBe(true);
     expect(grid.getTileInfoAt(35, 28)).toBe(true);
+    expect(grid.getTileInfoAt(60, 20)).toBe(true);
 });
 
 

@@ -5,6 +5,7 @@ import { page } from 'vitest/browser';
 
 import { removeTestElements } from './utils';
 import { Grid } from '../src/grid';
+import { getHitMapFromTileSheet } from '../src/hit';
 
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -95,6 +96,33 @@ test('grid rendering through non-fixed viewport', async () => {
     app.stage.addChild(grid);
     grid.update(0);
     expect(document.body).toMatchScreenshot('grid-non-fixed-viewport-render');
+});
+
+test('grid collision detection', async () => {
+    const app = new PIXI.Application();
+    await app.init({
+        width: 300,
+        height: 300,
+    });
+    const sheet = await PIXI.Assets.load('tests/assets/tiles-grass.json');
+    document.body.appendChild(app.canvas);
+
+    const grid = new Grid({
+        spritesheet: sheet,
+        fixedViewport: false,
+        hitMap: getHitMapFromTileSheet(app.renderer, sheet),
+    });
+    grid.setTiles([
+        ['grass-13', 'grass-03', 'grass-00'],
+        ['grass-01', 'grass-06', 'grass-11'],
+        ['grass-08', 'grass-09', 'grass-15'],
+    ]);
+    app.stage.addChild(grid);
+    grid.update(0);
+    expect(grid.getSolidAt(0, 0)).to.be.false;
+    expect(grid.getSolidAt(4, 4)).to.be.false;
+    expect(grid.getSolidAt(15, 15)).to.be.true;
+    expect(grid.getSolidAt(24, 24)).to.be.true;
 });
 
 afterEach(() => {

@@ -1,7 +1,8 @@
 
 import * as PIXI from 'pixi.js';
 
-export type HitMap = (x: number, y: number, tileWidth: number, tileHeight: number) => boolean;
+export type HitMapFunc = (x: number, y: number, tileWidth: number, tileHeight: number) => boolean;
+export type HitMap = HitMapFunc | boolean;
 export type HitMapStore = Map<string, HitMap>;
 
 
@@ -69,10 +70,18 @@ export function makeDiagonalHitMap(upDown: string, aboveBelow: string): HitMap {
 export function getHitMapFromTexture(
     renderer: PIXI.Renderer,
     texture: PIXI.Texture,
-    params: HitMapParams,
+    params: HitMapParams = {},
 ): HitMap {
     const threshold = params.opacityThreshold ?? 1;
     const grid = makeHitGridFromTexture(renderer, texture, threshold);
+    // If the grid is fully solid, or fully empty, just return the boolean values
+    // (should be faster)
+    if (grid.every(row => row.every(value => !!value))) {
+        return true;
+    }
+    if (grid.every(row => row.every(value => !value))) {
+        return false;
+    }
     return (x: number, y: number, w: number, h: number) => {
         return grid[y][x];
     }

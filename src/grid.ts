@@ -265,8 +265,11 @@ export class Grid extends BaseGrid<string> {
             return !!info;
         }
         const hit = this.hitMap.get(info);
-        if (!hit) {
+        if (hit === true) {
             return true;
+        }
+        if (!hit) {
+            return !!info;
         }
         const xp = (x|0) % this.tileSize.width;
         const yp = (y|0) % this.tileSize.height;
