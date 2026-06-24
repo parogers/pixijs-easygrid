@@ -8,8 +8,8 @@ import { DualGrid } from './dual-grid';
 import { HitMapStore } from './hit';
 
 
-export type StackedGridParams<T> = {
-    layers: StackedLayerParams<T>[];
+export type StackedDualGridParams<T> = {
+    layers: StackedDualGridLayerParams<T>[];
     autoUpdate?: boolean;
     bottomTileInfo?: T;
     bottomLayerHeight?: number;
@@ -19,7 +19,7 @@ export type StackedGridParams<T> = {
 }
 
 
-export type StackedLayerParams<T> = {
+export type StackedDualGridLayerParams<T> = {
     tileInfo: T;
     terrain: boolean[][];
     spritesheet: PIXI.Spritesheet;
@@ -28,23 +28,23 @@ export type StackedLayerParams<T> = {
 }
 
 
-export type StackedLayerInfo = {
+export type StackedDualGridLayerInfo = {
     index: number;
     height: number;
 }
 
 
-export class StackedGrid<T> extends BaseGrid<T> {
+export class StackedDualGrid<T> extends BaseGrid<T> {
     layers: DualGrid<T>[] = []
     bottomTileInfo: T|null = null;
     bottomLayerHeight: number = 0;
-    layerInfo: Map<T|null, StackedLayerInfo> = new Map();
+    layerInfo: Map<T|null, StackedDualGridLayerInfo> = new Map();
     debugDualGrid: PIXI.Graphics|null = null;
     debugSubTileGrid: PIXI.Graphics|null = null;
     debugDualGridColor: number|null = null;
     debugDualGridSubTileColor: number|null = null;
 
-    constructor(params: StackedGridParams<T>) {
+    constructor(params: StackedDualGridParams<T>) {
         super({
             autoUpdate: params.autoUpdate,
         });
@@ -106,7 +106,7 @@ export class StackedGrid<T> extends BaseGrid<T> {
 
     /*
      * Returns a list of TileInfo objects representing each layer of the dual
-     * grid in the same order as StackedGridParams.layers (note the bottom
+     * grid in the same order as StackedDualGridParams.layers (note the bottom
      * most constant layer, bottomTileInfo, is not included in this list)
      */
     getStackAt(x: number, y: number): (T|null)[] {

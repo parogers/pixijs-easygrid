@@ -104,9 +104,9 @@ cell.tileInfo; // eg. "grass" or "dirt"
 grid.getTerrainAt(10, 20); // returns the terrain map (ie boolean grid) interpreted as tile info (eg "grass" or "dirt")
 ```
 
-If you want multiple terrain types (eg forest, grass, water, etc) you'll need to use a StackedGrid instead.
+If you want multiple terrain types (eg forest, grass, water, etc) you'll need to use a StackedDualGrid instead.
 
-### StackedGrid
+### StackedDualGrid
 
 This is just a stack of dual grids layered overtop of each other. The spritesheets for the upper dual-grids should be the terrain type (eg. dirt) vs fully transparent tiles. That way when everything is rendered the lower layers will show through the gaps. The spritesheet for the bottom-most layer should (likely) be fully opaque. (eg. dirt vs water)
 
@@ -129,7 +129,7 @@ const dirtTerrain = [
 ];
 const grassTerrain = [/* ... */];
 const treeTerrain = [/* ... */];
-const grid = new easygrid.StackedGrid({
+const grid = new easygrid.StackedDualGrid({
     bottomTileInfo: 'water',
     layers: [
         {
@@ -182,10 +182,10 @@ grid.getTileInfoAt(7, 12); // G (because grass is above the dirt)
 
 #### Height map
 
-The StackedGrid supports a simple height map, where each layer can be associated with a height value. (default is the layer index)
+The StackedDualGrid supports a simple height map, where each layer can be associated with a height value. (default is the layer index)
 
 ```javascript
-const grid = new easygrid.StackedGrid({
+const grid = new easygrid.StackedDualGrid({
     bottomTileInfo: 'water',
     bottomLayerHeight: -1,
     layers: [

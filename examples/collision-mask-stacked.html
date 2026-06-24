@@ -20,7 +20,7 @@
 
             const grassSheet = await PIXI.Assets.load('assets/tiles-grass.json');
             const mountainSheet = await PIXI.Assets.load('assets/tiles-mountain.json');
-            const grid = new easygrid.StackedGrid({
+            const grid = new easygrid.StackedDualGrid({
                 bottomTileInfo: 'water',
                 layers: [
                     {

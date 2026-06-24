@@ -4,7 +4,7 @@ import { vi, expect, test, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
 
 import { removeTestElements } from './utils';
-import { StackedGrid } from '../src/stacked-grid';
+import { StackedDualGrid } from '../src/stacked-grid';
 
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
@@ -21,7 +21,7 @@ test('create a stacked grid', async () => {
     const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
     const treeSheet = await PIXI.Assets.load('tests/assets/tiles-trees.json');
 
-    const grid = new StackedGrid({
+    const grid = new StackedDualGrid({
         bottomTileInfo: 'water',
         layers: [
             {
@@ -84,7 +84,7 @@ test('stacked grid tile info', async () => {
     const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
     const treeSheet = await PIXI.Assets.load('tests/assets/tiles-trees.json');
 
-    const grid = new StackedGrid({
+    const grid = new StackedDualGrid({
         bottomTileInfo: 'water',
         layers: [
             {
@@ -147,7 +147,7 @@ test('configure layer heights', async () => {
     const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
     const treeSheet = await PIXI.Assets.load('tests/assets/tiles-trees.json');
 
-    const grid = new StackedGrid({
+    const grid = new StackedDualGrid({
         bottomTileInfo: 'water',
         layers: [
             {
@@ -199,7 +199,7 @@ test('render through viewport', async () => {
     const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
     const treeSheet = await PIXI.Assets.load('tests/assets/tiles-trees.json');
 
-    const grid = new StackedGrid({
+    const grid = new StackedDualGrid({
         bottomTileInfo: 'water',
         layers: [
             {
@@ -267,7 +267,7 @@ test('collision map', async () => {
     const dirtSheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
     const mountainSheet = await PIXI.Assets.load('tests/assets/tiles-mountain.json');
 
-    const grid = new StackedGrid({
+    const grid = new StackedDualGrid({
         bottomTileInfo: 'water',
         layers: [
             {
