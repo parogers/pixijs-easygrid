@@ -66,7 +66,7 @@ export class BaseGrid<T> extends PIXI.Container {
     private viewportMask: boolean = true;
     private _autoUpdate: boolean = false;
     private debugGrid: PIXI.Graphics|null = null;
-    protected fixedViewport: boolean = true;
+    fixedViewport: boolean = true;
 
     constructor(params: BaseGridParams = {}) {
         super();

@@ -4,7 +4,7 @@ import { vi, expect, test, afterEach } from 'vitest';
 import { page } from 'vitest/browser';
 
 import { removeTestElements } from './utils';
-import { StackedDualGrid } from '../src/stacked-grid';
+import { StackedDualGrid } from '../src/stacked-dual-grid';
 
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest';
