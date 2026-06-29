@@ -10,6 +10,7 @@ export type StackedGridParams = {
 
 export class StackedGrid extends BaseGrid<string> {
     layers: Grid[] = [];
+    layersByName: Map<string, Grid> = new Map();
 
     constructor(params: StackedGridParams = {}) {
         super({
@@ -40,8 +41,11 @@ export class StackedGrid extends BaseGrid<string> {
         return this.layers[0].tileSize;
     }
 
-    addGrid(grid: Grid) {
+    addGrid(grid: Grid, name: string = '') {
         this.layers.push(grid);
+        if (name) {
+            this.layersByName.set(name, grid);
+        }
         grid.fixedViewport = false;
         this.gridContainer.addChild(grid);
     }
