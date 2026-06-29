@@ -34,6 +34,8 @@ type GridParams = {
     findTexture?: FindTextureFunc;
     debugGridColor?: number;
     hitMap?: HitMapStore;
+    /* The grid of tiles (texture names from the global cache) to use */
+    tiles?: string[][];
 }
 
 export type FindTextureFunc = (name: string) => PIXI.Texture|null;
@@ -117,6 +119,9 @@ export class Grid extends BaseGrid<string> {
             this.findTexture = (tile: string) => {
                 return PIXI.Assets.cache.get(tile);
             }
+        }
+        if (params.tiles) {
+            this.setTiles(params.tiles);
         }
     }
 
