@@ -43,6 +43,28 @@ test('create a grid', async () => {
     expect(document.body).toMatchScreenshot('grid-render');
 });
 
+test('create a grid with inferred tile size', async () => {
+    const app = new PIXI.Application();
+    await app.init({
+        width: 300,
+        height: 300,
+    });
+    const sheet = await PIXI.Assets.load('tests/assets/tiles-dirt.json');
+
+    const grid = new Grid();
+    expect(grid.tileSize.width).toBe(0);
+    expect(grid.tileSize.height).toBe(0);
+    grid.setTiles([
+        ['dirt-00', 'dirt-00', 'dirt-00'],
+        ['dirt-00', 'dirt-00', 'dirt-00'],
+        ['dirt-00', 'dirt-00', 'dirt-00'],
+    ]);
+    grid.update(0);
+    expect(!!grid).toBe(true);
+    expect(grid.tileSize.width).toBe(16);
+    expect(grid.tileSize.height).toBe(16);
+});
+
 test('grid rendering through the viewport', async () => {
     const app = new PIXI.Application();
     await app.init({

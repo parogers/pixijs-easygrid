@@ -72,7 +72,10 @@ function getTileSize(params: GridParams) {
     if (params.spritesheet) {
         return guessTileSize(params.spritesheet);
     }
-    throw Error('must specify tileSize if not specifying a spritesheet');
+    return {
+        width: 0,
+        height: 0,
+    };
 }
 
 
@@ -87,7 +90,7 @@ export class Grid extends BaseGrid<string> {
     private spritesheet: PIXI.Spritesheet|null;
     private hitMap: HitMapStore|null = null;
 
-    constructor(params: GridParams) {
+    constructor(params: GridParams = {}) {
         super({
             viewportMask: params.viewportMask,
             autoUpdate: params.autoUpdate,
@@ -124,6 +127,24 @@ export class Grid extends BaseGrid<string> {
     }
 
     get tileSize(): Size {
+        if (!this._tileSize.width) {
+            const findTexture = () => {
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        const texture = this.findTexture(this.tiles[row][col]);
+                        if (texture) {
+                            return texture;
+                        }
+                    }
+                }
+                return null;
+            }
+            const texture = findTexture();
+            if (texture) {
+                this._tileSize.width = texture.width;
+                this._tileSize.height = texture.height;
+            }
+        }
         return this._tileSize;
     }
 
@@ -171,6 +192,9 @@ export class Grid extends BaseGrid<string> {
         }
         const tw = this.tileSize.width;
         const th = this.tileSize.height;
+        if (!tw) {
+            return context;
+        }
         context.translate(
             tw*range.colStart,
             th*range.rowStart
@@ -271,8 +295,13 @@ export class Grid extends BaseGrid<string> {
         if (!hit) {
             return !!info;
         }
-        const xp = (x|0) % this.tileSize.width;
-        const yp = (y|0) % this.tileSize.height;
-        return hit(xp, yp, this.tileSize.width, this.tileSize.height);
+        const tw = this.tileSize.width;
+        const th = this.tileSize.height;
+        if (!tw || !th) {
+            return false;
+        }
+        const xp = (x|0) % tw;
+        const yp = (y|0) % th;
+        return hit(xp, yp, tw, th);
     }
 }
