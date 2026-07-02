@@ -136,9 +136,12 @@ export class Grid extends BaseGrid<string> {
             const findTexture = () => {
                 for (let row = 0; row < this.rows; row++) {
                     for (let col = 0; col < this.cols; col++) {
-                        const texture = this.findTexture(this.tiles[row][col]);
-                        if (texture) {
-                            return texture;
+                        const name = this.tiles[row][col];
+                        if (name !== null) {
+                            const texture = this.findTexture(name);
+                            if (texture) {
+                                return texture;
+                            }
                         }
                     }
                 }
